@@ -45,6 +45,7 @@ const CustomTable = ({ columns, data, loading }) => {
         highlightOnHover
         withTableBorder
         withColumnBorders
+        style={{ tableLayout: "auto", width: "100%" }} // Ensure table adjusts to content
       >
         <LoadingOverlay visible={loading} />
         <Table.Thead>
@@ -56,7 +57,7 @@ const CustomTable = ({ columns, data, loading }) => {
                   style={{
                     cursor: "pointer",
                     padding: "4px 8px",
-                    width: column.width, // Apply the column width
+                    textAlign: "left",
                   }}
                 >
                   {column.render("Header")}
@@ -86,7 +87,7 @@ const CustomTable = ({ columns, data, loading }) => {
                     {...cell.getCellProps()}
                     style={{
                       padding: "4px 8px",
-                      width: cell.column.width, // Apply the column width
+                      textAlign: "left",
                     }}
                   >
                     {cell.render("Cell")}
