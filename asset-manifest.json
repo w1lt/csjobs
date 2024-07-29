@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/csjobs.lol/static/css/main.a886569e.css",
-    "main.js": "/csjobs.lol/static/js/main.b8df9f71.js",
-    "static/js/453.ed3810f9.chunk.js": "/csjobs.lol/static/js/453.ed3810f9.chunk.js",
-    "index.html": "/csjobs.lol/index.html",
-    "main.a886569e.css.map": "/csjobs.lol/static/css/main.a886569e.css.map",
-    "main.b8df9f71.js.map": "/csjobs.lol/static/js/main.b8df9f71.js.map",
-    "453.ed3810f9.chunk.js.map": "/csjobs.lol/static/js/453.ed3810f9.chunk.js.map"
+    "main.css": "/static/css/main.a886569e.css",
+    "main.js": "/static/js/main.d87b20d1.js",
+    "static/js/453.b47c2fcf.chunk.js": "/static/js/453.b47c2fcf.chunk.js",
+    "index.html": "/index.html",
+    "main.a886569e.css.map": "/static/css/main.a886569e.css.map",
+    "main.d87b20d1.js.map": "/static/js/main.d87b20d1.js.map",
+    "453.b47c2fcf.chunk.js.map": "/static/js/453.b47c2fcf.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.a886569e.css",
-    "static/js/main.b8df9f71.js"
+    "static/js/main.d87b20d1.js"
   ]
 }
