@@ -1,8 +1,35 @@
 import React from "react";
 import { Container, Title, Space, Paper, Button, Text } from "@mantine/core";
-import { listings } from "../data/listings";
+import { listings as unsortedListings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
 import { IconShare3 } from "@tabler/icons-react";
+
+// Function to convert "MMM DD" to a Date object
+const convertToDate = (dateStr) => {
+  const months = {
+    Jan: 0,
+    Feb: 1,
+    Mar: 2,
+    Apr: 3,
+    May: 4,
+    Jun: 5,
+    Jul: 6,
+    Aug: 7,
+    Sep: 8,
+    Oct: 9,
+    Nov: 10,
+    Dec: 11,
+  };
+  const [monthStr, day] = dateStr.split(" ");
+  const month = months[monthStr];
+  const year = new Date().getFullYear();
+  return new Date(year, month, parseInt(day));
+};
+
+// Sort the listings by date
+const listings = [...unsortedListings].sort(
+  (a, b) => convertToDate(b.date) - convertToDate(a.date)
+);
 
 const columns = [
   { Header: "Job Title", accessor: "title" },
@@ -35,8 +62,7 @@ const Homepage = () => {
       </Title>
       <Space h="md" />
       <Text align="center" size="lg" mb="md">
-        Check out the latest tech jobs all in one spot. Browse, apply, secure
-        your dream internship.
+        Browse, apply, secure your dream internship. New listings added daily.
       </Text>
 
       <Text c="dimmed" align="center" size="sm">
