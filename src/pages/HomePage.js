@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Space,
@@ -7,14 +7,14 @@ import {
   Text,
   ActionIcon,
   Flex,
+  Modal,
 } from "@mantine/core";
 import { listings as unsortedListings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
 import { IconSun, IconMoon } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 
-// Function to convert "MMM DD" to a Date object
 const convertToDate = (dateStr) => {
   const months = {
     Jan: 0,
@@ -40,34 +40,56 @@ const listings = [...unsortedListings].sort(
   (a, b) => convertToDate(b.date) - convertToDate(a.date)
 );
 
-const columns = [
-  { Header: "Title", accessor: "title" },
-  { Header: "Company", accessor: "company" },
-  { Header: "Location", accessor: "location" },
-  { Header: "Pay", accessor: "compensation" },
-  { Header: "Date Posted", accessor: "date" },
-  {
-    Header: "Action",
-    accessor: "action",
-    Cell: ({ row }) => (
-      <Button
-        color="blue"
-        size="xs"
-        onClick={() => window.open(row.original.link, "_blank")}
-      >
-        Apply
-      </Button>
-    ),
-  },
-];
-
 const Homepage = () => {
+  const [opened, { open, close }] = useDisclosure(false);
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const [currentLink, setCurrentLink] = useState("");
+  const [appliedJobs, setAppliedJobs] = useState(
+    JSON.parse(localStorage.getItem("appliedJobs")) || []
+  );
+
+  const handleApplyClick = (link) => {
+    setCurrentLink(link);
+    open();
+    window.open(link, "_blank");
+  };
+
+  const handleConfirmApply = () => {
+    const updatedAppliedJobs = [...appliedJobs, currentLink];
+    setAppliedJobs(updatedAppliedJobs);
+    localStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
+    close();
+  };
+
+  const columns = [
+    { Header: "Title", accessor: "title" },
+    { Header: "Company", accessor: "company" },
+    { Header: "Location", accessor: "location" },
+    { Header: "Pay", accessor: "compensation" },
+    { Header: "Date Posted", accessor: "date" },
+    {
+      Header: "Action",
+      accessor: "action",
+      Cell: ({ row }) => (
+        <Button
+          color={appliedJobs.includes(row.original.link) ? "green" : "blue"}
+          size="xs"
+          onClick={() => handleApplyClick(row.original.link)}
+        >
+          {appliedJobs.includes(row.original.link) ? "Applied" : "Apply"}
+        </Button>
+      ),
+    },
+  ];
 
   const mobileColumns = columns.filter(
     (column) => column.accessor !== "compensation" && column.accessor !== "date"
   );
+
+  useEffect(() => {
+    localStorage.setItem("appliedJobs", JSON.stringify(appliedJobs));
+  }, [appliedJobs]);
 
   return (
     <Container size="md" style={{ padding: "0 16px" }}>
@@ -108,6 +130,17 @@ const Homepage = () => {
               {currentColorScheme === "dark" ? <IconSun /> : <IconMoon />}
             </ActionIcon>
           </Flex>
+          <Modal
+            opened={opened}
+            onClose={close}
+            title="Application Confirmation"
+          >
+            <Text>Did you apply to this job?</Text>
+            <Flex justify="space-between" mt="md">
+              <Button onClick={handleConfirmApply}>Yes</Button>
+              <Button onClick={close}>No</Button>
+            </Flex>
+          </Modal>
         </Container>
       </Paper>
     </Container>

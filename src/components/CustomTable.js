@@ -14,7 +14,7 @@ const GlobalFilter = ({
     <TextInput
       value={globalFilter || ""}
       onChange={(e) => setGlobalFilter(e.target.value || undefined)}
-      placeholder={`Search from ${count} listings...`}
+      placeholder={`Search from ${count} jobs...`}
       style={{ marginBottom: "10px" }}
     />
   );
