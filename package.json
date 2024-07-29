@@ -4,6 +4,8 @@
   "homepage": "https://csjobs.lol/",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
     "@mantine/core": "^7.11.2",
     "@mantine/hooks": "^7.11.2",
     "@mantine/nprogress": "^7.11.2",

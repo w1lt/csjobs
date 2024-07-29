@@ -13,6 +13,7 @@ import { listings as unsortedListings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
 import { IconShare3, IconSun, IconMoon } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
+import { useMediaQuery } from "@mantine/hooks";
 
 // Function to convert "MMM DD" to a Date object
 const convertToDate = (dateStr) => {
@@ -36,7 +37,6 @@ const convertToDate = (dateStr) => {
   return new Date(year, month, parseInt(day));
 };
 
-// Sort the listings by date
 const listings = [...unsortedListings].sort(
   (a, b) => convertToDate(b.date) - convertToDate(a.date)
 );
@@ -57,7 +57,6 @@ const columns = [
         onClick={() => window.open(row.original.link, "_blank")}
       >
         Apply
-        <IconShare3 width={16} height={16} />
       </Button>
     ),
   },
@@ -65,9 +64,14 @@ const columns = [
 
 const Homepage = () => {
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const mobileColumns = columns.filter(
+    (column) => column.accessor !== "compensation" && column.accessor !== "date"
+  );
 
   return (
-    <Container size="md">
+    <Container size="md" style={{ padding: "0 16px" }}>
       <Space h="xl" />
       <Title order={1} align="center">
         csjobs.lol
@@ -82,12 +86,20 @@ const Homepage = () => {
       </Text>
       <Paper shadow="xl" py="md">
         <Container>
-          <CustomTable columns={columns} data={listings} />
+          <CustomTable
+            columns={isMobile ? mobileColumns : columns}
+            data={listings}
+          />
           <Flex justify="center" align="center" direction="row" mt="lg">
             <Text align="center" c="dimmed">
               More jobs coming soon...
             </Text>
-            <ActionIcon onClick={toggleColorScheme} size={20} variant="subtle">
+            <ActionIcon
+              onClick={toggleColorScheme}
+              size={20}
+              variant="subtle"
+              style={{ marginLeft: 8 }}
+            >
               {currentColorScheme === "dark" ? <IconSun /> : <IconMoon />}
             </ActionIcon>
           </Flex>
