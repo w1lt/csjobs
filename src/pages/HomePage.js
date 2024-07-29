@@ -41,10 +41,10 @@ const listings = [...unsortedListings].sort(
 );
 
 const columns = [
-  { Header: "Job Title", accessor: "title" },
+  { Header: "Title", accessor: "title" },
   { Header: "Company", accessor: "company" },
   { Header: "Location", accessor: "location" },
-  { Header: "Compensation", accessor: "compensation" },
+  { Header: "Pay", accessor: "compensation" },
   { Header: "Date Posted", accessor: "date" },
   {
     Header: "Action",
