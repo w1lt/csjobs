@@ -7,6 +7,43 @@ export const listings = [
     date: "Jul 15",
   },
   {
+    title: "Software Engineering Intern",
+    company: "Marshall Wace",
+    compensation: "",
+    location: "London, NYC, Singapore, Hong Kong",
+    date: "Jul 29",
+  },
+  {
+    title: "Software Engineer Intern 1 ",
+    company: "L3Harris Technologies",
+    compensation: "",
+    location: "Canoga Park, CA",
+    date: "Jul 29",
+  },
+  {
+    title: "Global Technology Analyst Intern",
+    company: "Bank of America",
+    compensation: "",
+    location:
+      "Charlotte, NC, Chicago, IL, Dallas Metro, TX, Denver, CO, NY Metro, Pennington, NJ, Richmond, VA, Washington, DC",
+    date: "Jul 29",
+  },
+  {
+    title: "Program Manager Intern",
+    company: "Amazon",
+    compensation: "",
+    location: "Seattle, WA",
+    date: "Jul 29",
+  },
+
+  {
+    title: "Software Engineering: Product Engineering Intern",
+    company: "Verizon",
+    compensation: "",
+    location: "Basking Ridge, NJ / Irving, TX",
+    date: "Jul 15",
+  },
+  {
     title: "Software Engineer Intern - Summer 2025",
     company: "Sensata",
     compensation: "",
