@@ -120,14 +120,6 @@ export const listings = [
     link: "https://jobs.ashbyhq.com/GPTZero/d7e6f3ee-8446-4ac4-b1f8-e79c9876c31a/application",
   },
   {
-    title: "Quantitative Trader Intern - Summer 2025",
-    company: "Tower Research Capital",
-    compensation: "$3k-5k/week",
-    location: "NYC",
-    date: "Jul 08",
-    link: "https://www.tower-research.com/open-positions/?gh_jid=6072039",
-  },
-  {
     title: "Software Developer Intern",
     company: "DRW",
     compensation: "Not Specified",

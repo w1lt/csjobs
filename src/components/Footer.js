@@ -4,6 +4,7 @@ import {
   IconBrandLinkedin,
   IconBrandGithub,
   IconWorldWww,
+  IconListLetters,
 } from "@tabler/icons-react";
 
 const Footer = () => {
@@ -24,6 +25,9 @@ const Footer = () => {
           </Anchor>
           <Anchor href="https://whitehead.wiki/" target="_blank">
             <IconWorldWww size={24} className="icon-hover" />
+          </Anchor>
+          <Anchor href="/todo">
+            <IconListLetters size={24} className="icon-hover" />
           </Anchor>
         </Group>
       </Center>

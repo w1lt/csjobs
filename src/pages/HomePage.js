@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Container,
-  Title,
   Space,
   Paper,
   Button,
@@ -11,7 +10,7 @@ import {
 } from "@mantine/core";
 import { listings as unsortedListings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
-import { IconShare3, IconSun, IconMoon } from "@tabler/icons-react";
+import { IconSun, IconMoon } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useMediaQuery } from "@mantine/hooks";
 
