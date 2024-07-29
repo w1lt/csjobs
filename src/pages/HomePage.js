@@ -1,23 +1,8 @@
 import React from "react";
-import {
-  Container,
-  Title,
-  Space,
-  Paper,
-  Button,
-  Text,
-  Group,
-  Anchor,
-  Center,
-} from "@mantine/core";
+import { Container, Title, Space, Paper, Button, Text } from "@mantine/core";
 import { listings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
-import {
-  IconShare3,
-  IconBrandLinkedin,
-  IconBrandGithub,
-  IconWorldWww,
-} from "@tabler/icons-react";
+import { IconShare3 } from "@tabler/icons-react";
 
 const columns = [
   { Header: "Job Title", accessor: "title" },
@@ -26,7 +11,7 @@ const columns = [
   { Header: "Compensation", accessor: "compensation" },
   { Header: "Date Posted", accessor: "date" },
   {
-    Header: "Actions",
+    Header: "Action",
     accessor: "action",
     Cell: ({ row }) => (
       <Button
@@ -45,7 +30,7 @@ const Homepage = () => {
   return (
     <Container size="md">
       <Space h="xl" />
-      <Title order={1} align="center" style={{ fontWeight: "normal" }}>
+      <Title order={1} align="center">
         csjobs.lol
       </Title>
       <Space h="md" />
@@ -53,23 +38,14 @@ const Homepage = () => {
         Check out the latest tech jobs all in one spot. Browse, apply, secure
         your dream internship.
       </Text>
-      <Center>
-        <Group mb="sm">
-          <Anchor href="https://linked.whitehead.wiki/" target="_blank">
-            <IconBrandLinkedin size={24} />
-          </Anchor>
-          <Anchor href="https://git.whitehead.wiki/" target="_blank">
-            <IconBrandGithub size={24} />
-          </Anchor>
-          <Anchor href="https://whitehead.wiki/" target="_blank">
-            <IconWorldWww size={24} />
-          </Anchor>
-        </Group>
-      </Center>
+
+      <Text c="dimmed" align="center" size="sm">
+        Last updated: July 29
+      </Text>
       <Paper shadow="xl" py="md">
         <Container>
           <CustomTable columns={columns} data={listings} />
-          <Text align="center" mt="lg">
+          <Text align="center" mt="lg" c="dimmed">
             More jobs coming soon...
           </Text>
         </Container>
