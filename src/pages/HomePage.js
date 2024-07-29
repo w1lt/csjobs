@@ -1,8 +1,18 @@
 import React from "react";
-import { Container, Title, Space, Paper, Button, Text } from "@mantine/core";
+import {
+  Container,
+  Title,
+  Space,
+  Paper,
+  Button,
+  Text,
+  ActionIcon,
+  Flex,
+} from "@mantine/core";
 import { listings as unsortedListings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
-import { IconShare3 } from "@tabler/icons-react";
+import { IconShare3, IconSun, IconMoon } from "@tabler/icons-react";
+import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 
 // Function to convert "MMM DD" to a Date object
 const convertToDate = (dateStr) => {
@@ -54,6 +64,8 @@ const columns = [
 ];
 
 const Homepage = () => {
+  const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
+
   return (
     <Container size="md">
       <Space h="xl" />
@@ -71,9 +83,14 @@ const Homepage = () => {
       <Paper shadow="xl" py="md">
         <Container>
           <CustomTable columns={columns} data={listings} />
-          <Text align="center" mt="lg" c="dimmed">
-            More jobs coming soon...
-          </Text>
+          <Flex justify="center" align="center" direction="row" mt="lg">
+            <Text align="center" c="dimmed">
+              More jobs coming soon...
+            </Text>
+            <ActionIcon onClick={toggleColorScheme} size={20} variant="subtle">
+              {currentColorScheme === "dark" ? <IconSun /> : <IconMoon />}
+            </ActionIcon>
+          </Flex>
         </Container>
       </Paper>
     </Container>
