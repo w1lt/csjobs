@@ -73,12 +73,18 @@ const Homepage = () => {
   return (
     <Container size="md" style={{ padding: "0 16px" }}>
       <Space h="xl" />
-      <Title order={1} align="center">
+      <Text
+        style={{ fontSize: "2rem" }}
+        align="center"
+        variant="gradient"
+        gradient={{ from: "red", to: "indigo", deg: 149 }}
+      >
         csjobs.lol
-      </Title>
-      <Space h="md" />
+      </Text>
+      <Space h="xs" />
       <Text align="center" size="lg" mb="md">
-        Browse, apply, secure your dream internship. New listings added daily.
+        Browse, apply, and secure your dream internship. New listings added
+        daily.
       </Text>
 
       <Text c="dimmed" align="center" size="sm">
