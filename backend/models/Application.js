@@ -7,11 +7,13 @@ const Application = sequelize.define("Application", {
   status: {
     type: DataTypes.STRING,
     allowNull: false,
-    defaultValue: "not_applied",
   },
 });
 
 Application.belongsTo(User);
 Application.belongsTo(Listing);
+
+User.hasMany(Application);
+Listing.hasMany(Application);
 
 module.exports = Application;

@@ -4,8 +4,8 @@ const dotenv = require("dotenv");
 
 dotenv.config();
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const generateToken = (user) => {
+  return jwt.sign({ user }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
 };
@@ -19,7 +19,7 @@ const registerUser = async (req, res) => {
     res.status(201).json({
       id: user.id,
       username: user.username,
-      token: generateToken(user.id),
+      token: generateToken({ id: user.id }),
     });
   } catch (error) {
     res.status(400).json({ message: "Invalid user data" });
@@ -35,7 +35,7 @@ const authUser = async (req, res) => {
     res.json({
       id: user.id,
       username: user.username,
-      token: generateToken(user.id),
+      token: generateToken({ id: user.id }),
     });
   } else {
     res.status(401).json({ message: "Invalid username or password" });

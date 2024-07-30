@@ -3,12 +3,13 @@ const { Application, Listing } = require("../models");
 const getApplications = async (req, res) => {
   try {
     const applications = await Application.findAll({
-      where: { userId: req.user.id },
+      where: { UserId: req.user.id }, // Ensure correct casing
       include: [Listing],
     });
     res.json(applications);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching applications:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -18,17 +19,22 @@ const applyToListing = async (req, res) => {
 
   try {
     let application = await Application.findOne({
-      where: { userId, listingId },
+      where: { UserId: userId, ListingId: listingId }, // Ensure correct casing
     });
     if (application) {
       application.status = status;
       await application.save();
     } else {
-      application = await Application.create({ userId, listingId, status });
+      application = await Application.create({
+        UserId: userId,
+        ListingId: listingId,
+        status,
+      }); // Ensure correct casing
     }
     res.status(201).json(application);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error applying to listing:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -45,7 +51,8 @@ const updateApplicationStatus = async (req, res) => {
       res.status(404).json({ message: "Application not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error updating application status:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 
@@ -61,7 +68,8 @@ const deleteApplication = async (req, res) => {
       res.status(404).json({ message: "Application not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error deleting application:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 

@@ -1,8 +1,5 @@
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-const { User } = require("../models");
-
-dotenv.config();
+const User = require("../models/User");
 
 const protect = async (req, res, next) => {
   let token;
@@ -11,22 +8,27 @@ const protect = async (req, res, next) => {
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
-    token = req.headers.authorization.split(" ")[1];
-
     try {
+      token = req.headers.authorization.split(" ")[1];
+      console.log("Token received:", token); // Debug log
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findByPk(decoded.id);
+      console.log("Decoded token:", decoded); // Debug log
+      if (!decoded.user || !decoded.user.id) {
+        throw new Error("Invalid token payload");
+      }
+      req.user = await User.findByPk(decoded.user.id);
       if (!req.user) {
-        throw new Error();
+        return res
+          .status(401)
+          .json({ message: "Not authorized, user not found" });
       }
       next();
     } catch (error) {
-      res.status(401).json({ message: "Not authorized, token failed" });
+      console.error("Token verification error:", error.message);
+      return res.status(401).json({ message: "Not authorized, token failed" });
     }
-  }
-
-  if (!token) {
-    res.status(401).json({ message: "Not authorized, no token" });
+  } else {
+    return res.status(401).json({ message: "Not authorized, no token" });
   }
 };
 
