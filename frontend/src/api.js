@@ -9,6 +9,10 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (userData) => {
   const response = await axios.post(`${API_URL}/auth/login`, userData);
+  console.log(response.data);
+  if (response.data.token) {
+    localStorage.setItem("token", response.data.token);
+  }
   return response.data;
 };
 
@@ -29,10 +33,20 @@ export const applyToListing = async (applicationData, token) => {
 };
 
 export const getApplications = async (token) => {
-  const response = await axios.get(`${API_URL}/applications`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return response.data;
+  try {
+    const response = await axios.get(`${API_URL}/applications`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Get applications error:",
+      error.response ? error.response.data : error.message
+    );
+    throw error;
+  }
 };
 
 export const updateApplicationStatus = async (applicationData, token) => {

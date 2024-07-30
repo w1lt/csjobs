@@ -14,7 +14,6 @@ import {
 import {
   getListings,
   applyToListing,
-  getApplications,
   updateApplicationStatus,
   deleteApplication,
 } from "../api";
@@ -25,6 +24,7 @@ import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import Confetti from "react-confetti";
 import convertToDate from "../utils/convertToDate";
 import AuthModal from "../components/AuthModal";
+import { useAuth } from "../context/AuthContext";
 
 const Homepage = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -40,9 +40,10 @@ const Homepage = () => {
   const [selectedFilter] = useState("");
   const [authOpened, { open: openAuth, close: closeAuth }] =
     useDisclosure(false);
-  const [token, setToken] = useState(null);
+
+  const { token, appliedJobs, setAppliedJobs, login, logout, loading } =
+    useAuth();
   const [listings, setListings] = useState([]);
-  const [appliedJobs, setAppliedJobs] = useState({});
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -53,23 +54,8 @@ const Homepage = () => {
       setListings(sortedListings);
     };
 
-    const fetchApplications = async () => {
-      if (token) {
-        const data = await getApplications(token);
-        const applied = {};
-        data.forEach((app) => {
-          applied[app.Listing.url] = {
-            status: app.status,
-            title: app.Listing.title,
-          };
-        });
-        setAppliedJobs(applied);
-      }
-    };
-
     fetchListings();
-    fetchApplications();
-  }, [token]);
+  }, []);
 
   const handleApplyClick = async (link, title) => {
     if (!appliedJobs[link]) {
@@ -97,7 +83,7 @@ const Homepage = () => {
         setConfettiVisible(false);
       }, 10000);
     } catch (error) {
-      console.error(error);
+      console.error("Error confirming application:", error);
     }
   };
 
@@ -113,7 +99,7 @@ const Homepage = () => {
       };
       setAppliedJobs(updatedAppliedJobs);
     } catch (error) {
-      console.error(error);
+      console.error("Error updating application status:", error);
     }
   };
 
@@ -126,7 +112,7 @@ const Homepage = () => {
       const { [link]: _, ...rest } = appliedJobs;
       setAppliedJobs(rest);
     } catch (error) {
-      console.error(error);
+      console.error("Error removing application status:", error);
     }
   };
 
@@ -220,6 +206,10 @@ const Homepage = () => {
     (column) => column.accessor !== "compensation" && column.accessor !== "date"
   );
 
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <Container size="md" mt={16}>
       <Text
@@ -240,9 +230,15 @@ const Homepage = () => {
         Last updated: July 29
       </Text>
 
-      <Button onClick={openAuth} style={{ marginBottom: "1rem" }}>
-        Login / Register
-      </Button>
+      {token ? (
+        <Button onClick={logout} style={{ marginBottom: "1rem" }}>
+          Logout
+        </Button>
+      ) : (
+        <Button onClick={openAuth} style={{ marginBottom: "1rem" }}>
+          Login / Register
+        </Button>
+      )}
 
       <Paper shadow="md" py="sm" withBorder>
         <Container>
@@ -250,7 +246,6 @@ const Homepage = () => {
             columns={isMobile ? mobileColumns : columns}
             data={filteredListings}
             appliedJobs={appliedJobs}
-            setAppliedJobs={setAppliedJobs}
             handleApplyClick={handleApplyClick}
             handleChangeStatus={handleChangeStatus}
             handleRemoveStatus={handleRemoveStatus}
@@ -297,7 +292,7 @@ const Homepage = () => {
           numberOfPieces={50}
         />
       )}
-      <AuthModal opened={authOpened} onClose={closeAuth} onLogin={setToken} />
+      <AuthModal opened={authOpened} onClose={closeAuth} onLogin={login} />
     </Container>
   );
 };
