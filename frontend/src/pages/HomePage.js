@@ -11,12 +11,7 @@ import {
   Menu,
   Box,
 } from "@mantine/core";
-import {
-  getListings,
-  applyToListing,
-  updateApplicationStatus,
-  deleteApplication,
-} from "../api";
+import { getListings, applyOrUpdateApplication } from "../api";
 import CustomTable from "../components/CustomTable";
 import { IconSun, IconMoon } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
@@ -30,7 +25,7 @@ const Homepage = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [currentLink, setCurrentLink] = useState("");
+  const [currentListingId, setCurrentListingId] = useState(null);
   const [currentJobTitle, setCurrentJobTitle] = useState("");
   const [confettiVisible, setConfettiVisible] = useState(false);
   const { width, height } = {
@@ -57,24 +52,29 @@ const Homepage = () => {
     fetchListings();
   }, []);
 
-  const handleApplyClick = async (link, title) => {
-    if (!appliedJobs[link]) {
-      setCurrentLink(link);
+  const handleApplyClick = async (listingId, title) => {
+    if (!appliedJobs[listingId]) {
+      setCurrentListingId(listingId);
       setCurrentJobTitle(title);
       open();
-      window.open(link, "_blank");
+      const listing = listings.find((listing) => listing.id === listingId);
+      window.open(listing.link, "_blank");
     }
   };
 
   const handleConfirmApply = async () => {
     try {
-      const listingId = listings.find(
-        (listing) => listing.url === currentLink
-      ).id;
-      await applyToListing({ listingId, status: "pending" }, token);
+      const applicationData = {
+        listingId: currentListingId,
+        status: "pending",
+      };
+      console.log("Sending application data:", applicationData);
+
+      await applyOrUpdateApplication(applicationData, token);
+
       const updatedAppliedJobs = {
         ...appliedJobs,
-        [currentLink]: { status: "pending", title: currentJobTitle },
+        [currentListingId]: { status: "pending", title: currentJobTitle },
       };
       setAppliedJobs(updatedAppliedJobs);
       close();
@@ -87,15 +87,12 @@ const Homepage = () => {
     }
   };
 
-  const handleChangeStatus = async (link, status) => {
+  const handleChangeStatus = async (listingId, status) => {
     try {
-      const applicationId = Object.keys(appliedJobs).find(
-        (key) => appliedJobs[key].title === link
-      );
-      await updateApplicationStatus({ applicationId, status }, token);
+      await applyOrUpdateApplication({ listingId, status }, token);
       const updatedAppliedJobs = {
         ...appliedJobs,
-        [link]: { ...appliedJobs[link], status },
+        [listingId]: { ...appliedJobs[listingId], status },
       };
       setAppliedJobs(updatedAppliedJobs);
     } catch (error) {
@@ -103,13 +100,10 @@ const Homepage = () => {
     }
   };
 
-  const handleRemoveStatus = async (link) => {
+  const handleRemoveStatus = async (listingId) => {
     try {
-      const applicationId = Object.keys(appliedJobs).find(
-        (key) => appliedJobs[key].title === link
-      );
-      await deleteApplication(applicationId, token);
-      const { [link]: _, ...rest } = appliedJobs;
+      await applyOrUpdateApplication({ listingId, status: "reset" }, token);
+      const { [listingId]: _, ...rest } = appliedJobs;
       setAppliedJobs(rest);
     } catch (error) {
       console.error("Error removing application status:", error);
@@ -118,10 +112,10 @@ const Homepage = () => {
 
   const filteredListings = listings.filter((listing) => {
     if (selectedFilter === "applied") {
-      return appliedJobs[listing.url];
+      return appliedJobs[listing.id];
     }
     if (selectedFilter === "not_applied") {
-      return !appliedJobs[listing.url];
+      return !appliedJobs[listing.id];
     }
     return true;
   });
@@ -136,7 +130,8 @@ const Homepage = () => {
       Header: "Status",
       accessor: "action",
       Cell: ({ row }) => {
-        const jobStatus = appliedJobs[row.original.url]?.status;
+        const listingId = row.original.id;
+        const jobStatus = appliedJobs[listingId]?.status;
         const buttonColor =
           jobStatus === "pending"
             ? "yellow"
@@ -146,7 +141,7 @@ const Homepage = () => {
             ? "green"
             : "blue";
 
-        return appliedJobs[row.original.url] ? (
+        return appliedJobs[listingId] ? (
           <Menu trigger="hover" openDelay={0} closeDelay={50}>
             <Menu.Target>
               <Button color={buttonColor} size="xs">
@@ -156,32 +151,29 @@ const Homepage = () => {
             <Menu.Dropdown>
               <Menu.Label>Change Status</Menu.Label>
               <Menu.Item
-                onClick={() => handleChangeStatus(row.original.url, "pending")}
+                onClick={() => handleChangeStatus(listingId, "pending")}
               >
                 Set to Pending
               </Menu.Item>
-
               <Menu.Item
-                onClick={() =>
-                  handleChangeStatus(row.original.url, "interview")
-                }
+                onClick={() => handleChangeStatus(listingId, "interview")}
               >
                 Set to Interview
               </Menu.Item>
               <Menu.Item
-                onClick={() => handleChangeStatus(row.original.url, "denied")}
+                onClick={() => handleChangeStatus(listingId, "denied")}
               >
                 Set to Denied
               </Menu.Item>
               <Menu.Divider />
               <Menu.Item
-                onClick={() => window.open(row.original.url, "_blank")}
+                onClick={() => window.open(row.original.link, "_blank")}
               >
                 Visit Application
               </Menu.Item>
               <Menu.Item
                 color="red"
-                onClick={() => handleRemoveStatus(row.original.url)}
+                onClick={() => handleRemoveStatus(listingId)}
               >
                 Reset Status
               </Menu.Item>
@@ -191,9 +183,7 @@ const Homepage = () => {
           <Button
             color={buttonColor}
             size="xs"
-            onClick={() =>
-              handleApplyClick(row.original.url, row.original.title)
-            }
+            onClick={() => handleApplyClick(listingId, row.original.title)}
           >
             Apply
           </Button>

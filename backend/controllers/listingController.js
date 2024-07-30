@@ -1,3 +1,4 @@
+//controllers/listingController.js
 const { Listing } = require("../models");
 
 const getListings = async (req, res) => {

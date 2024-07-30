@@ -1,3 +1,4 @@
+//models/index.js
 const User = require("./User");
 const Listing = require("./Listing");
 const Application = require("./Application");

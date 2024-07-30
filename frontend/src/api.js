@@ -8,9 +8,7 @@ export const registerUser = async (userData) => {
 };
 
 export const loginUser = async (userData) => {
-  console.log(userData);
   const response = await axios.post(`${API_URL}/auth/login`, userData);
-  console.log(response.data);
   return response.data;
 };
 
@@ -19,9 +17,9 @@ export const getListings = async () => {
   return response.data;
 };
 
-export const applyToListing = async (applicationData, token) => {
+export const applyOrUpdateApplication = async (applicationData, token) => {
   const response = await axios.post(
-    `${API_URL}/applications/apply`,
+    `${API_URL}/applications/apply-or-update`,
     applicationData,
     {
       headers: { Authorization: `Bearer ${token}` },
@@ -45,23 +43,4 @@ export const getApplications = async (token) => {
     );
     throw error;
   }
-};
-
-export const updateApplicationStatus = async (applicationData, token) => {
-  const response = await axios.put(
-    `${API_URL}/applications/update-status`,
-    applicationData,
-    {
-      headers: { Authorization: `Bearer ${token}` },
-    }
-  );
-  return response.data;
-};
-
-export const deleteApplication = async (applicationId, token) => {
-  const response = await axios.delete(`${API_URL}/applications/delete`, {
-    headers: { Authorization: `Bearer ${token}` },
-    data: { applicationId },
-  });
-  return response.data;
 };

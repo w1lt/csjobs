@@ -1,26 +1,28 @@
-const { Application, Listing } = require("../models");
-
-const getApplications = async (req, res) => {
-  try {
-    const applications = await Application.findAll({
-      where: { UserId: req.user.id }, // Ensure correct casing
-      include: [Listing],
-    });
-    res.json(applications);
-  } catch (error) {
-    console.error("Error fetching applications:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-const applyToListing = async (req, res) => {
+const applyOrUpdateApplication = async (req, res) => {
   const { listingId, status } = req.body;
   const { id: userId } = req.user;
 
+  if (!listingId || !status) {
+    return res
+      .status(400)
+      .json({ message: "ListingId and status are required" });
+  }
+
   try {
     let application = await Application.findOne({
-      where: { UserId: userId, ListingId: listingId }, // Ensure correct casing
+      where: { UserId: userId, ListingId: listingId },
     });
+
+    if (status === "reset") {
+      // If the status is "reset", delete the application
+      if (application) {
+        await application.destroy();
+        return res.status(200).json({ message: "Application reset" });
+      } else {
+        return res.status(404).json({ message: "Application not found" });
+      }
+    }
+
     if (application) {
       application.status = status;
       await application.save();
@@ -29,53 +31,11 @@ const applyToListing = async (req, res) => {
         UserId: userId,
         ListingId: listingId,
         status,
-      }); // Ensure correct casing
+      });
     }
     res.status(201).json(application);
   } catch (error) {
-    console.error("Error applying to listing:", error);
+    console.error("Error applying or updating application:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
-};
-
-const updateApplicationStatus = async (req, res) => {
-  const { applicationId, status } = req.body;
-
-  try {
-    const application = await Application.findByPk(applicationId);
-    if (application) {
-      application.status = status;
-      await application.save();
-      res.status(200).json(application);
-    } else {
-      res.status(404).json({ message: "Application not found" });
-    }
-  } catch (error) {
-    console.error("Error updating application status:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-const deleteApplication = async (req, res) => {
-  const { applicationId } = req.body;
-
-  try {
-    const application = await Application.findByPk(applicationId);
-    if (application) {
-      await application.destroy();
-      res.status(200).json({ message: "Application deleted" });
-    } else {
-      res.status(404).json({ message: "Application not found" });
-    }
-  } catch (error) {
-    console.error("Error deleting application:", error);
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};
-
-module.exports = {
-  getApplications,
-  applyToListing,
-  updateApplicationStatus,
-  deleteApplication,
 };
