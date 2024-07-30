@@ -38,15 +38,19 @@ const formatPay = (pay) => {
   return "";
 };
 
-const CustomTable = ({ columns, data, loading }) => {
+const CustomTable = ({
+  columns,
+  data,
+  appliedJobs,
+  handleApplyClick,
+  handleChangeStatus,
+  handleRemoveStatus,
+}) => {
   const [selectedFilter, setSelectedFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [appliedFilter, setAppliedFilter] = useState("Show all");
   const [payRange, setPayRange] = useState([0, 150]); // Assuming pay range from $0 to $75
   const [tempPayRange, setTempPayRange] = useState([0, 75]);
-  const [appliedJobs] = useState(
-    JSON.parse(localStorage.getItem("appliedJobs")) || {}
-  );
 
   const filteredData = useMemo(() => {
     return data.filter((listing) => {
@@ -71,8 +75,8 @@ const CustomTable = ({ columns, data, loading }) => {
       }
       if (
         (appliedFilter === "Show only applied jobs" &&
-          !appliedJobs[listing.link]) ||
-        (appliedFilter === "Hide applied jobs" && appliedJobs[listing.link])
+          !appliedJobs[listing.url]) ||
+        (appliedFilter === "Hide applied jobs" && appliedJobs[listing.url])
       ) {
         return false;
       }

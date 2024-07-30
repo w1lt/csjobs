@@ -230,7 +230,7 @@ export const listings = [
     location: "Houston, TX",
     date: "Jul 25",
     link: "https://osv-cci.wd1.myworkdayjobs.com/en-US/CCICareers/job/Houston-TX/GenAI-Internship--Summer-2025-_R862",
-    tags: ["AI", "Software Engineering"],
+    tags: ["AI", "Software Engineer"],
   },
   {
     title: "Software Developer Intern",
@@ -275,7 +275,7 @@ export const listings = [
     location: "Los Angeles, CA",
     date: "Jul 17",
     link: "https://careers.tiktok.com/position/7390530196414613811/detail",
-    tags: ["Mobile Software Engineering"],
+    tags: ["Mobile Software Engineer"],
   },
   {
     title: "Machine Learning Engineer Intern - AI Innovation Center - PHD",
@@ -302,7 +302,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7391925058660305162/detail",
-    tags: ["Mobile Software Engineering"],
+    tags: ["Mobile Software Engineer"],
   },
   {
     title: "Mobile Software Engineer Intern - Multimedia Client",
@@ -311,7 +311,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7391921273113266441/detail",
-    tags: ["Mobile Software Engineering"],
+    tags: ["Mobile Software Engineer"],
   },
   {
     title: "Backend Software Engineer Intern - Server Architecture",
@@ -320,7 +320,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7391922935051733275/detail",
-    tags: ["Backend Software Engineering"],
+    tags: ["Backend Software Engineer"],
   },
   {
     title: "Software Engineer Intern - Effect House",
