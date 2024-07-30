@@ -8,6 +8,7 @@ import {
   ActionIcon,
   Flex,
   Modal,
+  Group,
 } from "@mantine/core";
 import { listings as unsortedListings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
@@ -48,6 +49,7 @@ const Homepage = () => {
   const [appliedJobs, setAppliedJobs] = useState(
     JSON.parse(localStorage.getItem("appliedJobs")) || []
   );
+  const [selectedFilter, setSelectedFilter] = useState("");
 
   const handleApplyClick = (link) => {
     setCurrentLink(link);
@@ -61,6 +63,14 @@ const Homepage = () => {
     localStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
     close();
   };
+
+  const handleFilterClick = (filter) => {
+    setSelectedFilter(filter === selectedFilter ? "" : filter);
+  };
+
+  const filteredListings = listings.filter((listing) =>
+    selectedFilter ? (listing.tags || []).includes(selectedFilter) : true
+  );
 
   const columns = [
     { Header: "Title", accessor: "title" },
@@ -111,11 +121,12 @@ const Homepage = () => {
       <Text c="dimmed" align="center" size="sm">
         Last updated: July 29
       </Text>
+
       <Paper shadow="xl" py="md">
         <Container>
           <CustomTable
             columns={isMobile ? mobileColumns : columns}
-            data={listings}
+            data={filteredListings}
           />
           <Flex justify="center" align="center" direction="row" mt="lg">
             <Text align="center" c="dimmed">

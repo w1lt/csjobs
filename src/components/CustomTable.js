@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { useTable, useSortBy, useGlobalFilter } from "react-table";
-import { TextInput, Table, LoadingOverlay } from "@mantine/core";
+import { TextInput, Table, LoadingOverlay, Autocomplete } from "@mantine/core";
 import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
 
 const GlobalFilter = ({
@@ -21,6 +21,8 @@ const GlobalFilter = ({
 };
 
 const CustomTable = ({ columns, data, loading }) => {
+  const [selectedFilter, setSelectedFilter] = useState("");
+  
   const {
     getTableProps,
     getTableBodyProps,
@@ -30,7 +32,24 @@ const CustomTable = ({ columns, data, loading }) => {
     state,
     preGlobalFilteredRows,
     setGlobalFilter,
-  } = useTable({ columns, data }, useGlobalFilter, useSortBy);
+  } = useTable(
+    {
+      columns,
+      data: useMemo(() => {
+        if (!selectedFilter) return data;
+        return data.filter((listing) =>
+          (listing.tags || []).includes(selectedFilter)
+        );
+      }, [data, selectedFilter]),
+    },
+    useGlobalFilter,
+    useSortBy
+  );
+
+  const filterOptions = useMemo(() => {
+    const allTags = data.flatMap((listing) => listing.tags || []);
+    return Array.from(new Set(allTags));
+  }, [data]);
 
   return (
     <>
@@ -39,6 +58,16 @@ const CustomTable = ({ columns, data, loading }) => {
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
+
+      <Autocomplete
+        label="Filter by Job Type"
+        placeholder="Pick a job type"
+        data={filterOptions}
+        value={selectedFilter}
+        onChange={setSelectedFilter}
+        style={{ marginBottom: "10px" }}
+      />
+
       <div style={{ overflowX: "auto" }}>
         <Table
           {...getTableProps()}

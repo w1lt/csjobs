@@ -5,6 +5,7 @@ export const listings = [
     compensation: "",
     location: "Basking Ridge, NJ / Irving, TX",
     date: "Jul 15",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineering Intern",
@@ -12,6 +13,7 @@ export const listings = [
     compensation: "",
     location: "London, NYC, Singapore, Hong Kong",
     date: "Jul 29",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineer Intern 1 ",
@@ -19,6 +21,7 @@ export const listings = [
     compensation: "",
     location: "Canoga Park, CA",
     date: "Jul 29",
+    tags: ["Software Engineer"],
   },
   {
     title: "Global Technology Analyst Intern",
@@ -27,6 +30,7 @@ export const listings = [
     location:
       "Charlotte, NC, Chicago, IL, Dallas Metro, TX, Denver, CO, NY Metro, Pennington, NJ, Richmond, VA, Washington, DC",
     date: "Jul 29",
+    tags: ["Analyst"],
   },
   {
     title: "Program Manager Intern",
@@ -34,6 +38,7 @@ export const listings = [
     compensation: "",
     location: "Seattle, WA",
     date: "Jul 29",
+    tags: ["Software Engineer"],
   },
 
   {
@@ -42,6 +47,7 @@ export const listings = [
     compensation: "",
     location: "Basking Ridge, NJ / Irving, TX",
     date: "Jul 15",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineer Intern - Summer 2025",
@@ -50,6 +56,7 @@ export const listings = [
     location: "Attleboro, MA",
     date: "Jul 26",
     link: "https://sensata.wd1.myworkdayjobs.com/en-US/Sensata-Careers/job/Attleboro-Massachusetts/Software-Engineer-Intern---Summer-2025_IRC93689",
+    tags: ["Software Engineer"],
   },
   {
     title: "Systems Engineer Intern",
@@ -58,6 +65,7 @@ export const listings = [
     location: "Remote in USA / Dulles, VA",
     date: "Jul 23",
     link: "https://jobs.smartrecruiters.com/ATPCO1/744000000717125",
+    tags: ["Software Engineer"],
   },
   {
     title: "Engineering Intern",
@@ -66,6 +74,7 @@ export const listings = [
     location: "NYC",
     date: "Jul 23",
     link: "https://jobs.ashbyhq.com/antimetal/a9081c17-93b4-4db9-a1d2-0d608d53de0c/application",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineer, Intern",
@@ -74,6 +83,7 @@ export const listings = [
     location: "San Mateo, CA",
     date: "Jul 21",
     link: "https://www.ixl.com/company/careers?gh_jid=7535493002",
+    tags: ["Software Engineer"],
   },
   {
     title: "Mobile Software Engineer Intern - User Relation",
@@ -82,6 +92,7 @@ export const listings = [
     location: "Los Angeles, CA",
     date: "Jul 19",
     link: "https://careers.tiktok.com/position/7390530196414613811/detail",
+    tags: ["Software Engineer"],
   },
   {
     title: "Solutions Intern",
@@ -90,6 +101,7 @@ export const listings = [
     location: "Santa Clara, CA",
     date: "Jul 19",
     link: "https://boards.greenhouse.io/litmus46/jobs/4435534005",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineering Intern",
@@ -98,6 +110,7 @@ export const listings = [
     location: "Multiple locations",
     date: "Jul 17",
     link: "https://www.wellsfargojobs.com/en/jobs/r-385829/2025-technology-summer-internship-early-careers-software-or-data-engineer",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineer Internship",
@@ -106,6 +119,7 @@ export const listings = [
     location: "New York, NY",
     date: "Jul 16",
     link: "https://www.janestreet.com/join-jane-street/position/7527332002",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineer Intern - Python",
@@ -114,6 +128,7 @@ export const listings = [
     location: "Chicago, IL",
     date: "Jul 16",
     link: "https://akunacapital.com/job-details?gh_jid=6037985",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineer Intern - Data Engineering",
@@ -122,6 +137,7 @@ export const listings = [
     location: "Chicago, IL",
     date: "Jul 16",
     link: "https://akunacapital.com/job-details?gh_jid=6069872",
+    tags: ["Software Engineer"],
   },
   {
     title: "Software Engineer Intern - C++",
@@ -130,6 +146,7 @@ export const listings = [
     location: "Chicago, IL",
     date: "Jul 16",
     link: "https://akunacapital.com/job-details?gh_jid=6080090",
+    tags: ["Software Engineer"],
   },
   {
     title: "Performance Engineer Intern - Summer 2025",
@@ -138,6 +155,7 @@ export const listings = [
     location: "Chicago, IL",
     date: "Jul 15",
     link: "https://www.akunacapital.com/job-details?gh_jid=5744699",
+    tags: ["Software Engineer"],
   },
   {
     title: "Trader Intern - Summer 2025",
@@ -146,6 +164,7 @@ export const listings = [
     location: "Chicago, IL",
     date: "Jul 15",
     link: "https://www.akunacapital.com/job-details?gh_jid=6075208",
+    tags: ["Quantitive"],
   },
   {
     title: "Quantitative Development Internship - Summer 2025",
@@ -154,6 +173,7 @@ export const listings = [
     location: "Chicago, IL",
     date: "Jul 15",
     link: "https://www.akunacapital.com/job-details?gh_jid=5744527",
+    tags: ["Quantitive"]
   },
   {
     title: "Machine Learning Intern",
@@ -162,6 +182,7 @@ export const listings = [
     location: "Toronto, ON, Canada / NYC",
     date: "Jul 11",
     link: "https://jobs.ashbyhq.com/GPTZero/d7e6f3ee-8446-4ac4-b1f8-e79c9876c31a/application",
+    
   },
   {
     title: "Software Developer Intern",
@@ -170,6 +191,7 @@ export const listings = [
     location: "Houston, TX / Chicago, IL",
     date: "Jul 08",
     link: "https://boards.greenhouse.io/drweng/jobs/6071742",
+    tags: ["Software Development"],
   },
   {
     title: "2025 Summer Internship Program - AMERS",
@@ -178,6 +200,7 @@ export const listings = [
     location: "Americas",
     date: "Jul 08",
     link: "https://blackrock.tal.net/vx/lang-en-GB/mobile-0/brand-3/xf-42e764beb7f7/candidate/so/pm/1/pl/1/opp/8163-2025-Summer-Internship-Program-AMERS/en-GB",
+    tags: ["Finance", "Investment"],
   },
   {
     title: "Quantitative Research Intern - MS/BS",
@@ -186,6 +209,7 @@ export const listings = [
     location: "Austin, TX",
     date: "Jul 05",
     link: "https://optiver.com/working-at-optiver/career-opportunities/7499032002/?gh_jid=7499032002",
+    tags: ["Quantitative Research"],
   },
   {
     title: "Quantitative Trader Intern - Summer 2025",
@@ -194,6 +218,7 @@ export const listings = [
     location: "Austin, TX",
     date: "Jul 05",
     link: "https://optiver.com/working-at-optiver/career-opportunities/7499032003/?gh_jid=7499032003",
+    tags: ["Quantitative Trading"],
   },
   {
     title: "Summer 2025 - Software Engineering Intern",
@@ -202,6 +227,7 @@ export const listings = [
     location: "London",
     date: "Jul 05",
     link: "https://cqs.com/careers/current-vacancies/?gh_jid=7513036002",
+    tags: ["Software Engineering"],
   },
   {
     title: "Data Science Machine Learning Intern",
@@ -210,6 +236,7 @@ export const listings = [
     location: "Stamford, CT",
     date: "Jul 25",
     link: "https://osv-cci.wd1.myworkdayjobs.com/en-US/CCICareers/job/Stamford-CT/Data-Science-Machine-Learning-Internship--Summer-2025-_R855",
+    tags: ["Data Science", "Machine Learning"],
   },
   {
     title: "GenAI Intern",
@@ -218,6 +245,7 @@ export const listings = [
     location: "Houston, TX",
     date: "Jul 25",
     link: "https://osv-cci.wd1.myworkdayjobs.com/en-US/CCICareers/job/Houston-TX/GenAI-Internship--Summer-2025-_R862",
+    tags: ["AI", "Software Engineering"],
   },
   {
     title: "Software Engineer Intern",
@@ -226,6 +254,7 @@ export const listings = [
     location: "New York City, San Francisco",
     date: "Jul 25",
     link: "https://wellfound.com/jobs?job_listing_id=3068181",
+    tags: ["Software Engineering"],
   },
   {
     title: "Software Developer Internship",
@@ -234,6 +263,7 @@ export const listings = [
     location: "Austin, TX",
     date: "Jul 24",
     link: "https://quantiqpartners.zohorecruit.com/forms/1965216ed406321a2f6e355156f0e94ea7405c37b4ef00a027ca731b06e9be8d",
+    tags: ["Software Development"],
   },
   {
     title: "Software Analyst Intern",
@@ -242,6 +272,7 @@ export const listings = [
     location: "Oklahoma City, OK",
     date: "Jul 24",
     link: "https://pc00.paycomonline.com/v4/ats/web.php/jobs/ViewJobDetails?job=233574&clientkey=A38173AIE92874820ALRE20847CDE927PIW76526",
+    tags: ["Software Analysis"],
   },
   {
     title: "Software Engineering Intern",
@@ -250,6 +281,7 @@ export const listings = [
     location: "Owings Mills, MD, Baltimore, MD",
     date: "Jul 23",
     link: "https://troweprice.wd5.myworkdayjobs.com/en-US/TRowePrice/job/Owings-Mills-MD/XMLNAME-2025-Global-Technology---Software-Engineering-Internship-Program_72424",
+    tags: ["Software Engineering"],
   },
   {
     title: "Research Scientist Intern - AI Innovation Center - PHD",
@@ -258,6 +290,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 20",
     link: "https://careers.tiktok.com/position/7391920167514638643/detail",
+    tags: ["AI Research"],
   },
   {
     title: "Mobile Software Engineer Intern - User Relation",
@@ -266,6 +299,7 @@ export const listings = [
     location: "Los Angeles, CA",
     date: "Jul 17",
     link: "https://careers.tiktok.com/position/7390530196414613811/detail",
+    tags: ["Mobile Software Engineering"],
   },
   {
     title: "Machine Learning Engineer Intern - AI Innovation Center - PHD",
@@ -274,6 +308,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 17",
     link: "https://careers.tiktok.com/position/7391930642331830578/detail",
+    tags: ["Machine Learning"],
   },
   {
     title: "Software Engineer Intern - Anti Automated Solutions",
@@ -282,6 +317,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7390487764133234994/detail",
+    tags: ["Software Engineering"],
   },
   {
     title: "Mobile Software Engineer Intern - Video on Demand",
@@ -290,6 +326,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7391925058660305162/detail",
+    tags: ["Mobile Software Engineering"],
   },
   {
     title: "Mobile Software Engineer Intern - Multimedia Client",
@@ -298,6 +335,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7391921273113266441/detail",
+    tags: ["Mobile Software Engineering"],
   },
   {
     title: "Backend Software Engineer Intern - Server Architecture",
@@ -306,6 +344,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7391922935051733275/detail",
+    tags: ["Backend Software Engineering"],
   },
   {
     title: "Software Engineer Intern - Effect House",
@@ -314,6 +353,7 @@ export const listings = [
     location: "San Jose, CA",
     date: "Jul 16",
     link: "https://careers.tiktok.com/position/7392099728617523507/detail",
+    tags: ["Software Engineering"],
   },
   {
     title: "Software Engineer Intern",
@@ -322,6 +362,7 @@ export const listings = [
     location: "Remote",
     date: "Jul 19",
     link: "https://boards.greenhouse.io/databento/jobs/4374815",
+    tags: ["Software Engineering"],
   },
   {
     title: "Software Engineering Intern",
@@ -330,6 +371,7 @@ export const listings = [
     location: "Multiple locations",
     date: "Jul 17",
     link: "https://www.wellsfargojobs.com/en/jobs/r-385829/2025-technology-summer-internship-early-careers-software-or-data-engineer/",
+    tags: ["Software Engineering"],
   },
   {
     title: "Software Engineer Intern - C++",
