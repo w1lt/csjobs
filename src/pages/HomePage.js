@@ -141,9 +141,6 @@ const Homepage = () => {
         Browse, apply, and secure your dream internship. New listings added
         daily.
       </Text>
-      <Text align="center" size="md" mb="md">
-        View my <Link to="/applied">Applied Jobs</Link>
-      </Text>
 
       <Text c="dimmed" align="center" size="sm">
         Last updated: July 29
