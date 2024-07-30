@@ -15,6 +15,8 @@ import CustomTable from "../components/CustomTable";
 import { IconSun, IconMoon } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
+import Confetti from "react-confetti";
+import { Link } from "react-router-dom";
 
 const convertToDate = (dateStr) => {
   const months = {
@@ -43,16 +45,26 @@ const listings = [...unsortedListings].sort(
 
 const Homepage = () => {
   const [opened, { open, close }] = useDisclosure(false);
+  const [congratsOpened, { open: openCongrats, close: closeCongrats }] =
+    useDisclosure(false);
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [currentLink, setCurrentLink] = useState("");
+  const [currentJobTitle, setCurrentJobTitle] = useState("");
   const [appliedJobs, setAppliedJobs] = useState(
     JSON.parse(localStorage.getItem("appliedJobs")) || []
   );
+  const [confettiVisible, setConfettiVisible] = useState(false);
+  const [confettiFading, setConfettiFading] = useState(false);
+  const { width, height } = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
   const [selectedFilter, setSelectedFilter] = useState("");
 
-  const handleApplyClick = (link) => {
+  const handleApplyClick = (link, title) => {
     setCurrentLink(link);
+    setCurrentJobTitle(title);
     open();
     window.open(link, "_blank");
   };
@@ -62,6 +74,16 @@ const Homepage = () => {
     setAppliedJobs(updatedAppliedJobs);
     localStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
     close();
+    setConfettiVisible(true);
+    setTimeout(() => setConfettiFading(true), 3000); // Start fading after 3 seconds
+    setTimeout(() => {
+      setConfettiVisible(false);
+      setConfettiFading(false);
+    }, 5000); // Hide confetti after 5 seconds
+
+    if (appliedJobs.length === 0) {
+      openCongrats();
+    }
   };
 
   const handleFilterClick = (filter) => {
@@ -79,13 +101,15 @@ const Homepage = () => {
     { Header: "Pay", accessor: "compensation" },
     { Header: "Date Posted", accessor: "date" },
     {
-      Header: "Action",
+      Header: "Apply",
       accessor: "action",
       Cell: ({ row }) => (
         <Button
           color={appliedJobs.includes(row.original.link) ? "green" : "blue"}
           size="xs"
-          onClick={() => handleApplyClick(row.original.link)}
+          onClick={() =>
+            handleApplyClick(row.original.link, row.original.title)
+          }
         >
           {appliedJobs.includes(row.original.link) ? "Applied" : "Apply"}
         </Button>
@@ -117,6 +141,9 @@ const Homepage = () => {
         Browse, apply, and secure your dream internship. New listings added
         daily.
       </Text>
+      <Text align="center" size="md" mb="md">
+        View my <Link to="/applied">Applied Jobs</Link>
+      </Text>
 
       <Text c="dimmed" align="center" size="sm">
         Last updated: July 29
@@ -145,15 +172,43 @@ const Homepage = () => {
             opened={opened}
             onClose={close}
             title="Application Confirmation"
+            size="sm"
           >
-            <Text>Did you apply to this job?</Text>
-            <Flex justify="space-between" mt="md">
-              <Button onClick={handleConfirmApply}>Yes</Button>
-              <Button onClick={close}>No</Button>
+            <Text>Did you apply to the job: {currentJobTitle}?</Text>
+            <Flex justify="center" gap="md" mt="md">
+              <Button color="green" onClick={handleConfirmApply}>
+                Yeah!
+              </Button>
+              <Button color="red" onClick={close}>
+                Nope
+              </Button>
+            </Flex>
+          </Modal>
+          <Modal
+            opened={congratsOpened}
+            onClose={closeCongrats}
+            title="Congratulations!"
+            size="sm"
+          >
+            <Text>
+              Congrats on applying to your first job! Keep up the great work!
+            </Text>
+            <Flex justify="center" gap="md" mt="md">
+              <Button color="blue" onClick={closeCongrats}>
+                Thanks!
+              </Button>
             </Flex>
           </Modal>
         </Container>
       </Paper>
+      {confettiVisible && (
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={confettiFading ? 0 : 200}
+        />
+      )}
     </Container>
   );
 };

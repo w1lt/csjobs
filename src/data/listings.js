@@ -13,6 +13,7 @@ export const listings = [
     compensation: "",
     location: "London, NYC, Singapore, Hong Kong",
     date: "Jul 29",
+    link: "https://www.mwam.com/technology-internship-programme/",
     tags: ["Software Engineer"],
   },
   {
@@ -21,6 +22,7 @@ export const listings = [
     compensation: "",
     location: "Canoga Park, CA",
     date: "Jul 29",
+    link: "https://careers.l3harris.com/job/-/-/4832/67443054544?src=SNS-10240",
     tags: ["Software Engineer"],
   },
   {
@@ -30,6 +32,7 @@ export const listings = [
     location:
       "Charlotte, NC, Chicago, IL, Dallas Metro, TX, Denver, CO, NY Metro, Pennington, NJ, Richmond, VA, Washington, DC",
     date: "Jul 29",
+    link: "https://campus.bankofamerica.com/careers/global_technology_summer_analyst_program__2025.html",
     tags: ["Analyst"],
   },
   {
@@ -38,6 +41,7 @@ export const listings = [
     compensation: "",
     location: "Seattle, WA",
     date: "Jul 29",
+    link: "https://www.amazon.jobs/en/jobs/2713207/2025-program-manager-intern",
     tags: ["Software Engineer"],
   },
 
@@ -173,7 +177,7 @@ export const listings = [
     location: "Chicago, IL",
     date: "Jul 15",
     link: "https://www.akunacapital.com/job-details?gh_jid=5744527",
-    tags: ["Quantitive"]
+    tags: ["Quantitive"],
   },
   {
     title: "Machine Learning Intern",
@@ -182,7 +186,6 @@ export const listings = [
     location: "Toronto, ON, Canada / NYC",
     date: "Jul 11",
     link: "https://jobs.ashbyhq.com/GPTZero/d7e6f3ee-8446-4ac4-b1f8-e79c9876c31a/application",
-    
   },
   {
     title: "Software Developer Intern",
