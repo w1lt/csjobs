@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage";
 import "./App.css";
 import Footer from "./components/Footer";
 import TodoPage from "./pages/TodoPage";
+import ScrollTop from "./components/ScrollTop";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/todo" element={<TodoPage />} />
       </Routes>
       <Footer />
+      <ScrollTop />
     </>
   );
 }

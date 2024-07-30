@@ -8,7 +8,8 @@ import {
   ActionIcon,
   Flex,
   Modal,
-  Group,
+  Menu,
+  Box,
 } from "@mantine/core";
 import { listings as unsortedListings } from "../data/listings";
 import CustomTable from "../components/CustomTable";
@@ -16,7 +17,6 @@ import { IconSun, IconMoon } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import Confetti from "react-confetti";
-import { Link } from "react-router-dom";
 
 const convertToDate = (dateStr) => {
   const months = {
@@ -45,75 +45,141 @@ const listings = [...unsortedListings].sort(
 
 const Homepage = () => {
   const [opened, { open, close }] = useDisclosure(false);
-  const [congratsOpened, { open: openCongrats, close: closeCongrats }] =
-    useDisclosure(false);
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [currentLink, setCurrentLink] = useState("");
   const [currentJobTitle, setCurrentJobTitle] = useState("");
   const [appliedJobs, setAppliedJobs] = useState(
-    JSON.parse(localStorage.getItem("appliedJobs")) || []
+    JSON.parse(localStorage.getItem("appliedJobs")) || {}
   );
   const [confettiVisible, setConfettiVisible] = useState(false);
-  const [confettiFading, setConfettiFading] = useState(false);
   const { width, height } = {
     width: window.innerWidth,
     height: window.innerHeight,
   };
-  const [selectedFilter, setSelectedFilter] = useState("");
+  const [selectedFilter] = useState("");
 
   const handleApplyClick = (link, title) => {
-    setCurrentLink(link);
-    setCurrentJobTitle(title);
-    open();
-    window.open(link, "_blank");
+    if (!appliedJobs[link]) {
+      setCurrentLink(link);
+      setCurrentJobTitle(title);
+      open();
+      window.open(link, "_blank");
+    }
   };
 
   const handleConfirmApply = () => {
-    const updatedAppliedJobs = [...appliedJobs, currentLink];
+    const updatedAppliedJobs = {
+      ...appliedJobs,
+      [currentLink]: { status: "pending", title: currentJobTitle },
+    };
     setAppliedJobs(updatedAppliedJobs);
     localStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
     close();
     setConfettiVisible(true);
-    setTimeout(() => setConfettiFading(true), 3000); // Start fading after 3 seconds
     setTimeout(() => {
       setConfettiVisible(false);
-      setConfettiFading(false);
-    }, 5000); // Hide confetti after 5 seconds
+    }, 10000);
+  };
 
-    if (appliedJobs.length === 0) {
-      openCongrats();
+  const handleChangeStatus = (link, status) => {
+    const updatedAppliedJobs = {
+      ...appliedJobs,
+      [link]: { ...appliedJobs[link], status },
+    };
+    setAppliedJobs(updatedAppliedJobs);
+    localStorage.setItem("appliedJobs", JSON.stringify(updatedAppliedJobs));
+  };
+
+  const handleRemoveStatus = (link) => {
+    const { [link]: _, ...rest } = appliedJobs;
+    setAppliedJobs(rest);
+    localStorage.setItem("appliedJobs", JSON.stringify(rest));
+  };
+
+  const filteredListings = listings.filter((listing) => {
+    if (selectedFilter === "applied") {
+      return appliedJobs[listing.link];
     }
-  };
-
-  const handleFilterClick = (filter) => {
-    setSelectedFilter(filter === selectedFilter ? "" : filter);
-  };
-
-  const filteredListings = listings.filter((listing) =>
-    selectedFilter ? (listing.tags || []).includes(selectedFilter) : true
-  );
+    if (selectedFilter === "not_applied") {
+      return !appliedJobs[listing.link];
+    }
+    return true;
+  });
 
   const columns = [
     { Header: "Title", accessor: "title" },
     { Header: "Company", accessor: "company" },
     { Header: "Location", accessor: "location" },
-    { Header: "Pay", accessor: "compensation" },
+    { Header: "Compensation", accessor: "compensation" },
     { Header: "Date Posted", accessor: "date" },
     {
-      Header: "Apply",
+      Header: "Status",
       accessor: "action",
-      Cell: ({ row }) => (
-        <Button
-          color={appliedJobs.includes(row.original.link) ? "green" : "blue"}
-          size="xs"
-          onClick={() =>
-            handleApplyClick(row.original.link, row.original.title)
-          }
-        >
-          {appliedJobs.includes(row.original.link) ? "Applied" : "Apply"}
-        </Button>
-      ),
+      Cell: ({ row }) => {
+        const jobStatus = appliedJobs[row.original.link]?.status;
+        const buttonColor =
+          jobStatus === "pending"
+            ? "yellow"
+            : jobStatus === "denied"
+            ? "red"
+            : jobStatus === "interview"
+            ? "green"
+            : "blue";
+
+        return appliedJobs[row.original.link] ? (
+          <Menu trigger="hover" openDelay={0} closeDelay={50}>
+            <Menu.Target>
+              <Button color={buttonColor} size="xs">
+                {jobStatus.charAt(0).toUpperCase() + jobStatus.slice(1)}
+              </Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Label>Change Status</Menu.Label>
+              <Menu.Item
+                onClick={() => handleChangeStatus(row.original.link, "pending")}
+              >
+                Set to Pending
+              </Menu.Item>
+
+              <Menu.Item
+                onClick={() =>
+                  handleChangeStatus(row.original.link, "interview")
+                }
+              >
+                Set to Interview
+              </Menu.Item>
+              <Menu.Item
+                onClick={() => handleChangeStatus(row.original.link, "denied")}
+              >
+                Set to Denied
+              </Menu.Item>
+              <Menu.Divider />
+              <Menu.Item
+                onClick={() => window.open(row.original.link, "_blank")}
+              >
+                Visit Application
+              </Menu.Item>
+              <Menu.Item
+                color="red"
+                onClick={() => handleRemoveStatus(row.original.link)}
+              >
+                Reset Status
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        ) : (
+          <Button
+            color={buttonColor}
+            size="xs"
+            onClick={() =>
+              handleApplyClick(row.original.link, row.original.title)
+            }
+          >
+            Apply
+          </Button>
+        );
+      },
     },
   ];
 
@@ -126,8 +192,7 @@ const Homepage = () => {
   }, [appliedJobs]);
 
   return (
-    <Container size="md" style={{ padding: "0 16px" }}>
-      <Space h="xl" />
+    <Container size="md" mt={16}>
       <Text
         style={{ fontSize: "2rem" }}
         align="center"
@@ -137,20 +202,25 @@ const Homepage = () => {
         csjobs.lol
       </Text>
       <Space h="xs" />
-      <Text align="center" size="lg" mb="md">
+      <Text align="center" size="lg" mb="md" c="dimmed">
         Browse, apply, and secure your dream internship. New listings added
         daily.
       </Text>
 
-      <Text c="dimmed" align="center" size="sm">
+      <Text c="dimmed" align="center" size="sm" mb={16}>
         Last updated: July 29
       </Text>
 
-      <Paper shadow="xl" py="md">
+      <Paper shadow="md" py="sm" withBorder>
         <Container>
           <CustomTable
             columns={isMobile ? mobileColumns : columns}
             data={filteredListings}
+            appliedJobs={appliedJobs}
+            setAppliedJobs={setAppliedJobs}
+            handleApplyClick={handleApplyClick}
+            handleChangeStatus={handleChangeStatus}
+            handleRemoveStatus={handleRemoveStatus}
           />
           <Flex justify="center" align="center" direction="row" mt="lg">
             <Text align="center" c="dimmed">
@@ -166,33 +236,21 @@ const Homepage = () => {
             </ActionIcon>
           </Flex>
           <Modal
+            title="Confirm Application"
             opened={opened}
             onClose={close}
-            title="Application Confirmation"
             size="sm"
           >
-            <Text>Did you apply to the job: {currentJobTitle}?</Text>
+            <Box mt="md" mb="lg" style={{ textAlign: "center" }}>
+              <Text>Did you apply to the job: </Text>
+              <Text weight={700}>{currentJobTitle}?</Text>
+            </Box>
             <Flex justify="center" gap="md" mt="md">
               <Button color="green" onClick={handleConfirmApply}>
                 Yeah!
               </Button>
               <Button color="red" onClick={close}>
                 Nope
-              </Button>
-            </Flex>
-          </Modal>
-          <Modal
-            opened={congratsOpened}
-            onClose={closeCongrats}
-            title="Congratulations!"
-            size="sm"
-          >
-            <Text>
-              Congrats on applying to your first job! Keep up the great work!
-            </Text>
-            <Flex justify="center" gap="md" mt="md">
-              <Button color="blue" onClick={closeCongrats}>
-                Thanks!
               </Button>
             </Flex>
           </Modal>
@@ -203,7 +261,7 @@ const Homepage = () => {
           width={width}
           height={height}
           recycle={false}
-          numberOfPieces={confettiFading ? 0 : 200}
+          numberOfPieces={50}
         />
       )}
     </Container>

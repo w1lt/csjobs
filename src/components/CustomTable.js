@@ -1,6 +1,15 @@
 import React, { useState, useMemo } from "react";
 import { useTable, useSortBy, useGlobalFilter } from "react-table";
-import { TextInput, Table, LoadingOverlay, Autocomplete } from "@mantine/core";
+import {
+  TextInput,
+  Table,
+  Autocomplete,
+  Select,
+  Flex,
+  Box,
+  RangeSlider,
+  InputLabel,
+} from "@mantine/core";
 import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
 
 const GlobalFilter = ({
@@ -9,20 +18,75 @@ const GlobalFilter = ({
   setGlobalFilter,
 }) => {
   const count = preGlobalFilteredRows.length;
-
   return (
     <TextInput
       value={globalFilter || ""}
+      label="Search"
       onChange={(e) => setGlobalFilter(e.target.value || undefined)}
-      placeholder={`Search from ${count} jobs...`}
-      style={{ marginBottom: "10px" }}
+      placeholder={`Search from ${count} listings`}
+      fullWidth
     />
   );
 };
 
+const formatPay = (pay) => {
+  if (Array.isArray(pay)) {
+    return `$${pay[0]} - $${pay[1]}/hour`;
+  } else if (typeof pay === "number") {
+    return `$${pay}/hour`;
+  }
+  return "";
+};
+
 const CustomTable = ({ columns, data, loading }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
-  
+  const [locationFilter, setLocationFilter] = useState("");
+  const [appliedFilter, setAppliedFilter] = useState("Show all");
+  const [payRange, setPayRange] = useState([0, 150]); // Assuming pay range from $0 to $75
+  const [tempPayRange, setTempPayRange] = useState([0, 75]);
+  const [appliedJobs] = useState(
+    JSON.parse(localStorage.getItem("appliedJobs")) || {}
+  );
+
+  const filteredData = useMemo(() => {
+    return data.filter((listing) => {
+      const pay = Array.isArray(listing.compensation)
+        ? listing.compensation
+        : [listing.compensation, listing.compensation];
+      const isWithinRange = pay[0] >= payRange[0] && pay[1] <= payRange[1];
+
+      if (
+        selectedFilter &&
+        !(listing.tags || []).some((tag) =>
+          tag.toLowerCase().includes(selectedFilter.toLowerCase())
+        )
+      ) {
+        return false;
+      }
+      const location = Array.isArray(listing.location)
+        ? listing.location.join(", ").toLowerCase()
+        : listing.location.toLowerCase();
+      if (locationFilter && !location.includes(locationFilter.toLowerCase())) {
+        return false;
+      }
+      if (
+        (appliedFilter === "Show only applied jobs" &&
+          !appliedJobs[listing.link]) ||
+        (appliedFilter === "Hide applied jobs" && appliedJobs[listing.link])
+      ) {
+        return false;
+      }
+      return isWithinRange;
+    });
+  }, [
+    data,
+    selectedFilter,
+    locationFilter,
+    appliedFilter,
+    appliedJobs,
+    payRange,
+  ]);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -35,38 +99,91 @@ const CustomTable = ({ columns, data, loading }) => {
   } = useTable(
     {
       columns,
-      data: useMemo(() => {
-        if (!selectedFilter) return data;
-        return data.filter((listing) =>
-          (listing.tags || []).includes(selectedFilter)
-        );
-      }, [data, selectedFilter]),
+      data: filteredData,
     },
     useGlobalFilter,
     useSortBy
   );
 
   const filterOptions = useMemo(() => {
-    const allTags = data.flatMap((listing) => listing.tags || []);
+    const allTags = filteredData.flatMap((listing) => listing.tags || []);
     return Array.from(new Set(allTags));
-  }, [data]);
+  }, [filteredData]);
+
+  const locationOptions = useMemo(() => {
+    const allLocations = filteredData.flatMap((listing) =>
+      Array.isArray(listing.location) ? listing.location : [listing.location]
+    );
+    return Array.from(new Set(allLocations));
+  }, [filteredData]);
+
+  const renderLocation = (location) => {
+    if (Array.isArray(location)) {
+      return location.join(", ");
+    }
+    return location;
+  };
 
   return (
     <>
-      <GlobalFilter
-        preGlobalFilteredRows={preGlobalFilteredRows}
-        globalFilter={state.globalFilter}
-        setGlobalFilter={setGlobalFilter}
-      />
+      <Box mb="md">
+        <GlobalFilter
+          preGlobalFilteredRows={preGlobalFilteredRows}
+          globalFilter={state.globalFilter}
+          setGlobalFilter={setGlobalFilter}
+        />
+      </Box>
 
-      <Autocomplete
-        label="Filter by Job Type"
-        placeholder="Pick a job type"
-        data={filterOptions}
-        value={selectedFilter}
-        onChange={setSelectedFilter}
-        style={{ marginBottom: "10px" }}
-      />
+      <Flex align="flex-start" wrap="wrap" gap="md" mb="md">
+        <Autocomplete
+          label="Job Type"
+          placeholder="Select a job type"
+          data={filterOptions}
+          value={selectedFilter}
+          onChange={setSelectedFilter}
+        />
+
+        <Autocomplete
+          label="Location"
+          placeholder="Select a location"
+          data={locationOptions}
+          value={locationFilter}
+          onChange={setLocationFilter}
+        />
+
+        <Select
+          label="Applied Status"
+          placeholder="Select filter"
+          data={[
+            { value: "Show all", label: "Show all" },
+            {
+              value: "Show only applied jobs",
+              label: "Show only applied jobs",
+            },
+            { value: "Hide applied jobs", label: "Hide applied jobs" },
+          ]}
+          value={appliedFilter}
+          onChange={setAppliedFilter}
+        />
+
+        <Box mb={12} style={{ flexGrow: 1 }}>
+          <InputLabel>Pay Range</InputLabel>
+          <RangeSlider
+            label={(value) => `$${value}/hour`}
+            min={0}
+            max={130}
+            step={1}
+            value={tempPayRange}
+            onChange={setTempPayRange}
+            onChangeEnd={setPayRange}
+            marks={[
+              { value: 0, label: "$0" },
+              { value: 65, label: "$65" },
+              { value: 130, label: "$130" },
+            ]}
+          />
+        </Box>
+      </Flex>
 
       <div style={{ overflowX: "auto" }}>
         <Table
@@ -77,7 +194,6 @@ const CustomTable = ({ columns, data, loading }) => {
           withColumnBorders
           style={{ tableLayout: "auto", width: "100%" }}
         >
-          <LoadingOverlay visible={loading} />
           <Table.Thead>
             {headerGroups.map((headerGroup) => (
               <Table.Tr {...headerGroup.getHeaderGroupProps()}>
@@ -123,7 +239,11 @@ const CustomTable = ({ columns, data, loading }) => {
                         wordBreak: "break-word",
                       }}
                     >
-                      {cell.render("Cell")}
+                      {cell.column.id === "location"
+                        ? renderLocation(cell.value)
+                        : cell.column.id === "compensation"
+                        ? formatPay(cell.value)
+                        : cell.render("Cell")}
                     </Table.Td>
                   ))}
                 </Table.Tr>
