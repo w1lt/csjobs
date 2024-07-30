@@ -32,12 +32,19 @@ const Homepage = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   };
-  const [selectedFilter] = useState("");
+  const [selectedFilter] = useState(""); // Added selectedFilter state
   const [authOpened, { open: openAuth, close: closeAuth }] =
     useDisclosure(false);
 
-  const { token, appliedJobs, setAppliedJobs, login, logout, loading } =
-    useAuth();
+  const {
+    token,
+    appliedJobs,
+    setAppliedJobs,
+    login,
+    logout,
+    loading,
+    fetchApplications,
+  } = useAuth();
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
@@ -51,6 +58,12 @@ const Homepage = () => {
 
     fetchListings();
   }, []);
+
+  useEffect(() => {
+    if (token) {
+      fetchApplications();
+    }
+  }, [token, fetchApplications]);
 
   const handleApplyClick = async (listingId, title) => {
     if (!appliedJobs[listingId]) {
