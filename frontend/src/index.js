@@ -11,7 +11,11 @@ import "@mantine/core/styles.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{ colorScheme: "dark" }} // Set the default color scheme here
+    >
       <Router>
         <App />
       </Router>

@@ -226,7 +226,7 @@ const Homepage = () => {
         style={{ fontSize: "2rem" }}
         align="center"
         variant="gradient"
-        gradient={{ from: "red", to: "indigo", deg: 149 }}
+        gradient={{ from: "indigo", to: "red", deg: 149 }}
       >
         csjobs.lol
       </Text>
