@@ -19,4 +19,18 @@ const createListing = async (req, res) => {
   }
 };
 
-module.exports = { getListings, createListing };
+const updateListing = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Listing.findByPk(id);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+    await listing.update(req.body);
+    res.json(listing);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = { getListings, createListing, updateListing };

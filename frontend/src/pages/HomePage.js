@@ -5,25 +5,40 @@ import {
   Paper,
   Button,
   Text,
-  ActionIcon,
   Flex,
-  Modal,
   Menu,
-  Box,
 } from "@mantine/core";
-import { getListings, applyOrUpdateApplication } from "../api";
+import { getListings, applyOrUpdateApplication, getApplications } from "../api";
 import CustomTable from "../components/CustomTable";
-import { IconSun, IconMoon } from "@tabler/icons-react";
-import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
+import ReportListingModal from "../components/ReportListingModal";
+import {
+  IconLoader,
+  IconTie,
+  IconExclamationCircle,
+  IconSquareArrowUp,
+  IconRestore,
+  IconUpload,
+  IconZoomExclamation,
+} from "@tabler/icons-react";
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import Confetti from "react-confetti";
 import convertToDate from "../utils/convertToDate";
 import AuthModal from "../components/AuthModal";
+import AccountModal from "../components/AccountModal";
+import ConfirmApplyModal from "../components/ConfirmApplyModal";
 import { useAuth } from "../context/AuthContext";
+import { notifications } from "@mantine/notifications";
+import Header from "../components/Header"; // Import Header component
 
 const Homepage = () => {
-  const [opened, { open, close }] = useDisclosure(false);
-  const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
+  const [accountOpened, { open: openAccount, close: closeAccount }] =
+    useDisclosure(false);
+  const [
+    confirmApplyOpened,
+    { open: openConfirmApply, close: closeConfirmApply },
+  ] = useDisclosure(false);
+  const [reportOpened, { open: openReport, close: closeReport }] =
+    useDisclosure(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [currentListingId, setCurrentListingId] = useState(null);
   const [currentJobTitle, setCurrentJobTitle] = useState("");
@@ -32,44 +47,69 @@ const Homepage = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   };
-  const [selectedFilter] = useState(""); // Added selectedFilter state
+  const [selectedFilter] = useState("");
   const [authOpened, { open: openAuth, close: closeAuth }] =
     useDisclosure(false);
+  const [loadingListingId, setLoadingListingId] = useState(null);
 
   const {
     token,
     appliedJobs,
     setAppliedJobs,
     login,
-    logout,
+    setLoading,
     loading,
-    fetchApplications,
+    logout,
   } = useAuth();
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
+    const fetchApplications = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      console.log("Fetching applications...");
+
+      try {
+        const data = await getApplications(token);
+        console.log(data);
+        const applied = {};
+        data.forEach((app) => {
+          applied[app.ListingId] = {
+            status: app.status,
+            title: app.Listing.title,
+          };
+        });
+        setAppliedJobs(applied);
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     const fetchListings = async () => {
       const data = await getListings();
       const sortedListings = [...data].sort(
         (a, b) => convertToDate(b.date) - convertToDate(a.date)
       );
       setListings(sortedListings);
+      if (token) {
+        fetchApplications(sortedListings);
+      }
     };
-
+    setLoading(true);
     fetchListings();
-  }, []);
-
-  useEffect(() => {
-    if (token) {
-      fetchApplications();
-    }
-  }, [token, fetchApplications]);
+    setLoading(false);
+  }, [setLoading, token, setAppliedJobs]);
 
   const handleApplyClick = async (listingId, title) => {
     if (!appliedJobs[listingId]) {
       setCurrentListingId(listingId);
       setCurrentJobTitle(title);
-      open();
+      openConfirmApply();
       const listing = listings.find((listing) => listing.id === listingId);
       window.open(listing.link, "_blank");
     }
@@ -77,32 +117,63 @@ const Homepage = () => {
 
   const handleConfirmApply = async () => {
     try {
-      const applicationData = {
-        listingId: currentListingId,
-        status: "pending",
-      };
-      console.log("Sending application data:", applicationData);
+      if (token) {
+        closeConfirmApply();
+        const applicationData = {
+          listingId: currentListingId,
+          status: "pending",
+        };
+        console.log("Sending application data:", applicationData);
+        setLoading(true);
+        setLoadingListingId(currentListingId);
+        await applyOrUpdateApplication(applicationData, token);
 
-      await applyOrUpdateApplication(applicationData, token);
+        const updatedAppliedJobs = {
+          ...appliedJobs,
+          [currentListingId]: { status: "pending", title: currentJobTitle },
+        };
+        setAppliedJobs(updatedAppliedJobs);
 
-      const updatedAppliedJobs = {
-        ...appliedJobs,
-        [currentListingId]: { status: "pending", title: currentJobTitle },
-      };
-      setAppliedJobs(updatedAppliedJobs);
-      close();
-      setConfettiVisible(true);
-      setTimeout(() => {
-        setConfettiVisible(false);
-      }, 10000);
+        setLoading(false);
+        setLoadingListingId(null);
+        setConfettiVisible(true);
+        setTimeout(() => {
+          setConfettiVisible(false);
+        }, 10000);
+      } else {
+        closeConfirmApply();
+        notifications.show({
+          title: "Please log in",
+          message: "You must be logged in to save jobs.",
+          color: "red",
+        });
+        openAuth();
+      }
     } catch (error) {
       console.error("Error confirming application:", error);
     }
   };
 
+  const shareListing = (link) => {
+    navigator.clipboard.writeText(link);
+    notifications.show({
+      title: "Link copied",
+      message: `The link has been copied to your clipboard!`,
+    });
+  };
+
   const handleChangeStatus = async (listingId, status) => {
     try {
+      setLoading(true);
+      setLoadingListingId(listingId);
       await applyOrUpdateApplication({ listingId, status }, token);
+      setLoading(false);
+      notifications.show({
+        title: "Application status updated",
+        message: `Your application status has been updated to ${status}.`,
+        color: "green",
+      });
+      setLoadingListingId(null);
       const updatedAppliedJobs = {
         ...appliedJobs,
         [listingId]: { ...appliedJobs[listingId], status },
@@ -115,12 +186,22 @@ const Homepage = () => {
 
   const handleRemoveStatus = async (listingId) => {
     try {
+      setLoading(true);
+      setLoadingListingId(listingId);
       await applyOrUpdateApplication({ listingId, status: "reset" }, token);
+      setLoading(false);
+      setLoadingListingId(null);
       const { [listingId]: _, ...rest } = appliedJobs;
       setAppliedJobs(rest);
     } catch (error) {
       console.error("Error removing application status:", error);
     }
+  };
+
+  const handleReportListing = (listingId, title) => {
+    setCurrentListingId(listingId);
+    setCurrentJobTitle(title);
+    openReport();
   };
 
   const filteredListings = listings.filter((listing) => {
@@ -133,6 +214,101 @@ const Homepage = () => {
     return true;
   });
 
+  const renderActionButton = (listingId, row) => {
+    const jobStatus = appliedJobs[listingId]?.status;
+    const buttonColor =
+      jobStatus === "pending"
+        ? "yellow"
+        : jobStatus === "denied"
+        ? "red"
+        : jobStatus === "interview"
+        ? "green"
+        : "blue";
+
+    if (appliedJobs[listingId]) {
+      return (
+        <Menu
+          position="right"
+          withArrow
+          trigger="click-hover"
+          openDelay={25}
+          closeDelay={100}
+        >
+          <Menu.Target>
+            <Button
+              color={buttonColor}
+              size="xs"
+              fullWidth
+              loading={loadingListingId === listingId}
+            >
+              {jobStatus.charAt(0).toUpperCase() + jobStatus.slice(1)}
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>Update Status</Menu.Label>
+            <Menu.Item
+              leftSection={<IconLoader size={18} />}
+              onClick={() => handleChangeStatus(listingId, "pending")}
+            >
+              Pending
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconTie size={18} />}
+              onClick={() => handleChangeStatus(listingId, "interview")}
+            >
+              Interview
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconExclamationCircle size={18} />}
+              onClick={() => handleChangeStatus(listingId, "denied")}
+            >
+              Denied
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconRestore size={18} />}
+              color="red"
+              onClick={() => handleRemoveStatus(listingId)}
+            >
+              Reset Status
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item
+              leftSection={<IconSquareArrowUp size={18} />}
+              onClick={() => window.open(row.original.link, "_blank")}
+            >
+              View Application
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconUpload size={18} />}
+              onClick={() => shareListing(row.original.link)}
+            >
+              Share Listing
+            </Menu.Item>
+            <Menu.Divider />
+            <Menu.Item
+              leftSection={<IconZoomExclamation size={18} />}
+              onClick={() => handleReportListing(listingId, row.original.title)}
+            >
+              Report Listing
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      );
+    } else {
+      return (
+        <Button
+          color={buttonColor}
+          size="xs"
+          onClick={() => handleApplyClick(listingId, row.original.title)}
+          fullWidth
+          loading={loadingListingId === listingId}
+        >
+          Apply
+        </Button>
+      );
+    }
+  };
+
   const columns = [
     { Header: "Title", accessor: "title" },
     { Header: "Company", accessor: "company" },
@@ -142,66 +318,7 @@ const Homepage = () => {
     {
       Header: "Status",
       accessor: "action",
-      Cell: ({ row }) => {
-        const listingId = row.original.id;
-        const jobStatus = appliedJobs[listingId]?.status;
-        const buttonColor =
-          jobStatus === "pending"
-            ? "yellow"
-            : jobStatus === "denied"
-            ? "red"
-            : jobStatus === "interview"
-            ? "green"
-            : "blue";
-
-        return appliedJobs[listingId] ? (
-          <Menu trigger="hover" openDelay={0} closeDelay={50}>
-            <Menu.Target>
-              <Button color={buttonColor} size="xs">
-                {jobStatus.charAt(0).toUpperCase() + jobStatus.slice(1)}
-              </Button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Label>Change Status</Menu.Label>
-              <Menu.Item
-                onClick={() => handleChangeStatus(listingId, "pending")}
-              >
-                Set to Pending
-              </Menu.Item>
-              <Menu.Item
-                onClick={() => handleChangeStatus(listingId, "interview")}
-              >
-                Set to Interview
-              </Menu.Item>
-              <Menu.Item
-                onClick={() => handleChangeStatus(listingId, "denied")}
-              >
-                Set to Denied
-              </Menu.Item>
-              <Menu.Divider />
-              <Menu.Item
-                onClick={() => window.open(row.original.link, "_blank")}
-              >
-                Visit Application
-              </Menu.Item>
-              <Menu.Item
-                color="red"
-                onClick={() => handleRemoveStatus(listingId)}
-              >
-                Reset Status
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-        ) : (
-          <Button
-            color={buttonColor}
-            size="xs"
-            onClick={() => handleApplyClick(listingId, row.original.title)}
-          >
-            Apply
-          </Button>
-        );
-      },
+      Cell: ({ row }) => renderActionButton(row.original.id, row),
     },
   ];
 
@@ -209,40 +326,17 @@ const Homepage = () => {
     (column) => column.accessor !== "compensation" && column.accessor !== "date"
   );
 
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
-
   return (
     <Container size="md" mt={16}>
-      <Text
-        style={{ fontSize: "2rem" }}
-        align="center"
-        variant="gradient"
-        gradient={{ from: "indigo", to: "red", deg: 149 }}
-      >
-        csjobs.lol
-      </Text>
+      <Header openAccount={openAccount} openAuth={openAuth} logout={logout} />
       <Space h="xs" />
       <Text align="center" size="lg" mb="sm" c="dimmed">
         Browse, apply, and secure your dream internship. New listings added
         daily.
       </Text>
-
       <Text c="dimmed" align="center" size="sm" mb={16}>
         Last updated: July 29
       </Text>
-
-      {token ? (
-        <Button onClick={logout} style={{ marginBottom: "1rem" }}>
-          Logout
-        </Button>
-      ) : (
-        <Button onClick={openAuth} style={{ marginBottom: "1rem" }}>
-          Login / Register
-        </Button>
-      )}
-
       <Paper shadow="md" py="sm" withBorder>
         <Container>
           <CustomTable
@@ -257,34 +351,7 @@ const Homepage = () => {
             <Text align="center" c="dimmed">
               More jobs coming soon...
             </Text>
-            <ActionIcon
-              onClick={toggleColorScheme}
-              size={20}
-              variant="subtle"
-              style={{ marginLeft: 8 }}
-            >
-              {currentColorScheme === "dark" ? <IconSun /> : <IconMoon />}
-            </ActionIcon>
           </Flex>
-          <Modal
-            title="Confirm Application"
-            opened={opened}
-            onClose={close}
-            size="sm"
-          >
-            <Box mt="md" mb="lg" style={{ textAlign: "center" }}>
-              <Text>Did you apply to the job: </Text>
-              <Text weight={700}>{currentJobTitle}?</Text>
-            </Box>
-            <Flex justify="center" gap="md" mt="md">
-              <Button color="green" onClick={handleConfirmApply}>
-                Yeah!
-              </Button>
-              <Button color="red" onClick={close}>
-                Nope
-              </Button>
-            </Flex>
-          </Modal>
         </Container>
       </Paper>
       {confettiVisible && (
@@ -296,6 +363,20 @@ const Homepage = () => {
         />
       )}
       <AuthModal opened={authOpened} onClose={closeAuth} onLogin={login} />
+      <AccountModal opened={accountOpened} onClose={closeAccount} />
+      <ConfirmApplyModal
+        opened={confirmApplyOpened}
+        onClose={closeConfirmApply}
+        onConfirm={handleConfirmApply}
+        jobTitle={currentJobTitle}
+        loading={loading}
+      />
+      <ReportListingModal
+        opened={reportOpened}
+        onClose={closeReport}
+        listingId={currentListingId}
+        listingTitle={currentJobTitle}
+      />
     </Container>
   );
 };

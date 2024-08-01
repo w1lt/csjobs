@@ -1,14 +1,15 @@
-//routes/listings.js
 const express = require("express");
 const {
   getListings,
   createListing,
-} = require("../controllers/listingController.js");
+  updateListing,
+} = require("../controllers/listingController");
 const { protect } = require("../middleware/auth");
 
 const router = express.Router();
 
 router.get("/", getListings);
 router.post("/", protect, createListing);
+router.put("/:id", protect, updateListing);
 
 module.exports = router;

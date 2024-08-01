@@ -1,3 +1,4 @@
+// controllers/applicationController.js
 const { Application, Listing } = require("../models");
 
 const getApplications = async (req, res) => {
@@ -29,7 +30,6 @@ const applyOrUpdateApplication = async (req, res) => {
     });
 
     if (status === "reset") {
-      // If the status is "reset", delete the application
       if (application) {
         await application.destroy();
         return res.status(200).json({ message: "Application reset" });
@@ -39,7 +39,6 @@ const applyOrUpdateApplication = async (req, res) => {
     }
 
     if (application) {
-      // Update the status if application already exists
       application.status = status;
       await application.save();
     } else {

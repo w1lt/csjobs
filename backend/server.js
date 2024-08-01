@@ -6,6 +6,8 @@ const { syncModels } = require("./models");
 const authRoutes = require("./routes/auth");
 const listingRoutes = require("./routes/listings");
 const applicationRoutes = require("./routes/applications");
+const adminRoutes = require("./routes/admin");
+const reportRoutes = require("./routes/report");
 
 dotenv.config();
 
@@ -32,8 +34,10 @@ const startServer = async () => {
 
     // Define routes
     app.use("/api/auth", authRoutes);
+    app.use("/api/admin", adminRoutes);
     app.use("/api/listings", listingRoutes);
     app.use("/api/applications", applicationRoutes);
+    app.use("/api/reports", reportRoutes);
 
     // Start the server
     const PORT = process.env.PORT || 5000;

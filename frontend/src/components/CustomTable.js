@@ -49,8 +49,8 @@ const CustomTable = ({
   const [selectedFilter, setSelectedFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [appliedFilter, setAppliedFilter] = useState("Show all");
-  const [payRange, setPayRange] = useState([0, 150]); // Assuming pay range from $0 to $75
-  const [tempPayRange, setTempPayRange] = useState([0, 75]);
+  const [payRange, setPayRange] = useState([0, 130]); // Assuming pay range from $0 to $75
+  const [tempPayRange, setTempPayRange] = useState([0, 130]);
 
   const filteredData = useMemo(() => {
     return data.filter((listing) => {
@@ -199,57 +199,72 @@ const CustomTable = ({
           style={{ tableLayout: "auto", width: "100%" }}
         >
           <Table.Thead>
-            {headerGroups.map((headerGroup) => (
-              <Table.Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <Table.Th
-                    {...column.getHeaderProps(column.getSortByToggleProps())}
-                    style={{
-                      cursor: "pointer",
-                      padding: "4px 8px",
-                      textAlign: "left",
-                      whiteSpace: "normal",
-                    }}
-                  >
-                    {column.render("Header")}
-                    <span>
-                      {column.isSorted ? (
-                        column.isSortedDesc ? (
-                          <IconArrowDown size={16} />
-                        ) : (
-                          <IconArrowUp size={16} />
-                        )
-                      ) : (
-                        ""
-                      )}
-                    </span>
-                  </Table.Th>
-                ))}
-              </Table.Tr>
-            ))}
+            {headerGroups.map((headerGroup) => {
+              const { key, ...restHeaderGroupProps } =
+                headerGroup.getHeaderGroupProps();
+              return (
+                <Table.Tr key={headerGroup.id} {...restHeaderGroupProps}>
+                  {headerGroup.headers.map((column) => {
+                    const { key, ...restColumnProps } = column.getHeaderProps(
+                      column.getSortByToggleProps()
+                    );
+                    return (
+                      <Table.Th
+                        key={column.id}
+                        {...restColumnProps}
+                        style={{
+                          cursor: "pointer",
+                          padding: "4px 8px",
+                          textAlign: "left",
+                          whiteSpace: "normal",
+                        }}
+                      >
+                        {column.render("Header")}
+                        <span>
+                          {column.isSorted ? (
+                            column.isSortedDesc ? (
+                              <IconArrowDown size={16} />
+                            ) : (
+                              <IconArrowUp size={16} />
+                            )
+                          ) : (
+                            ""
+                          )}
+                        </span>
+                      </Table.Th>
+                    );
+                  })}
+                </Table.Tr>
+              );
+            })}
           </Table.Thead>
           <Table.Tbody {...getTableBodyProps()}>
             {rows.map((row) => {
               prepareRow(row);
+              const { key, ...restRowProps } = row.getRowProps();
               return (
-                <Table.Tr {...row.getRowProps()}>
-                  {row.cells.map((cell) => (
-                    <Table.Td
-                      {...cell.getCellProps()}
-                      style={{
-                        padding: "4px 8px",
-                        textAlign: "left",
-                        whiteSpace: "normal",
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      {cell.column.id === "location"
-                        ? renderLocation(cell.value)
-                        : cell.column.id === "compensation"
-                        ? formatPay(cell.value)
-                        : cell.render("Cell")}
-                    </Table.Td>
-                  ))}
+                <Table.Tr key={row.id} {...restRowProps}>
+                  {row.cells.map((cell) => {
+                    const { key, ...restCellProps } = cell.getCellProps();
+                    return (
+                      <Table.Td
+                        key={cell.column.id}
+                        {...restCellProps}
+                        style={{
+                          padding: "4px 8px",
+                          textAlign: "left",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {cell.column.id === "location"
+                          ? renderLocation(cell.value)
+                          : cell.column.id === "compensation"
+                          ? formatPay(cell.value)
+                          : cell.render("Cell")}
+                      </Table.Td>
+                    );
+                  })}
                 </Table.Tr>
               );
             })}
