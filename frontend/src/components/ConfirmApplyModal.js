@@ -9,6 +9,14 @@ import { modals } from "@mantine/modals";
 const ConfirmApplyModal = ({ context, id, innerProps }) => {
   const { token, appliedJobs, setAppliedJobs, setLoading } = useAuth();
 
+  const openAuthModal = () => {
+    modals.openContextModal({
+      size: "sm",
+      modal: "auth",
+      title: "Authentication",
+    });
+  };
+
   const handleConfirmApply = async () => {
     try {
       if (token) {
@@ -42,6 +50,7 @@ const ConfirmApplyModal = ({ context, id, innerProps }) => {
           innerProps.setConfettiVisible(false);
         }, 10000);
       } else {
+        openAuthModal();
         notifications.show({
           title: "Please log in",
           message: "You must be logged in to save jobs.",

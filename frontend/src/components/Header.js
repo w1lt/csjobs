@@ -50,6 +50,7 @@ const Header = () => {
           left: "50%",
           transform: "translateX(-50%)",
           fontSize: "2rem",
+          cursor: "pointer",
         }}
         onClick={() => navigate("/")}
       >

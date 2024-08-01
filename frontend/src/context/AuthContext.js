@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
 import { registerUser, loginUser } from "../api";
+import { nprogress } from "@mantine/nprogress";
 
 const AuthContext = createContext();
 
@@ -63,6 +64,14 @@ export const AuthProvider = ({ children }) => {
       color: "blue",
     });
   };
+
+  useEffect(() => {
+    if (loading) {
+      nprogress.start();
+    } else {
+      nprogress.complete();
+    }
+  }, [loading]);
 
   useEffect(() => {
     const savedToken = localStorage.getItem("token");

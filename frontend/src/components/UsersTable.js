@@ -119,7 +119,7 @@ const UsersTable = () => {
         ),
       },
     ],
-    [users]
+    []
   );
 
   const data = useMemo(() => users, [users]);

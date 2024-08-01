@@ -26,7 +26,6 @@ import formatDate from "../utils/formatDate"; // Import the new formatDate funct
 import { useAuth } from "../context/AuthContext";
 import { notifications } from "@mantine/notifications";
 import Header from "../components/Header"; // Import Header component
-import { nprogress } from "@mantine/nprogress";
 import { modals } from "@mantine/modals";
 
 const Homepage = () => {
@@ -39,23 +38,11 @@ const Homepage = () => {
   const [selectedFilter] = useState("");
   const [loadingListingId, setLoadingListingId] = useState(null);
 
-  const { token, appliedJobs, setAppliedJobs, setLoading, loading } = useAuth();
+  const { token, appliedJobs, setAppliedJobs, setLoading } = useAuth();
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
-    if (loading) {
-      nprogress.start();
-    } else {
-      nprogress.complete();
-    }
-  }, [loading]);
-
-  useEffect(() => {
     const fetchApplications = async () => {
-      if (!token) {
-        setLoading(false);
-        return;
-      }
       try {
         const data = await getApplications(token);
         console.log(data);
@@ -70,7 +57,7 @@ const Homepage = () => {
       } catch (error) {
         console.error("Error fetching applications:", error);
       } finally {
-        setLoading(false);
+        console.log("fetched");
         setLoading(false);
       }
     };
@@ -90,7 +77,7 @@ const Homepage = () => {
     };
 
     fetchListings();
-  }, [setLoading, token, setAppliedJobs]);
+  }, [token, setAppliedJobs, setLoading]);
 
   const openReportListingModal = (listingId, listingTitle) => {
     modals.openContextModal({
