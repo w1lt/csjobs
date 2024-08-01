@@ -22,12 +22,8 @@ const startServer = async () => {
     // Create Express app
     const app = express();
 
-    // Use CORS middleware with custom options
-    const corsOptions = {
-      origin: "http://localhost:3000", // Allow only this origin
-      optionsSuccessStatus: 200, // Some legacy browsers choke on 204
-    };
-    app.use(cors(corsOptions));
+    // Use CORS middleware to accept requests from all origins
+    app.use(cors());
 
     // Middleware to parse JSON
     app.use(express.json());
