@@ -121,6 +121,10 @@ const scrapeAndAddListings = async (req, res) => {
   }
 };
 
+const ping = (req, res) => {
+  res.status(200).json({ message: "pong" });
+};
+
 module.exports = {
   createListing,
   updateListing,
@@ -129,4 +133,5 @@ module.exports = {
   fetchUsers,
   deleteUser,
   scrapeAndAddListings,
+  ping,
 };
