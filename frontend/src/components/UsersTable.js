@@ -18,7 +18,6 @@ import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
 const UsersTable = () => {
   const { token } = useAuth();
   const [users, setUsers] = useState([]);
-  const [loadingUsers, setLoadingUsers] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userForm, setUserForm] = useState({ username: "", isAdmin: false });
 
@@ -35,8 +34,6 @@ const UsersTable = () => {
           message: "Failed to fetch users",
           color: "red",
         });
-      } finally {
-        setLoadingUsers(false);
       }
     };
 

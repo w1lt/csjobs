@@ -305,7 +305,7 @@ const AdminPage = () => {
         <Box mb="sm">
           <TextInput
             label="Username"
-            placeholder="Enter username"
+            placeholxr="Enter username"
             value={userForm.username}
             onChange={(e) =>
               handleUserFormChange("username", e.currentTarget.value)

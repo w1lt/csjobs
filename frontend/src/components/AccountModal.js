@@ -5,9 +5,7 @@ import { useAuth } from "../context/AuthContext";
 const AccountModal = ({ opened, onClose }) => {
   const { user } = useAuth();
 
-  const handleSave = () => {
-    onClose();
-  };
+  const handleSave = () => {};
 
   return (
     <>
