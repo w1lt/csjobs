@@ -28,6 +28,7 @@ const registerUser = async (req, res) => {
       user: userInfo,
     });
   } catch (error) {
+    console.error("Error during user registration:", error);
     res.status(400).json({ message: "Invalid user data" });
   }
 };
@@ -41,6 +42,7 @@ const authUser = async (req, res) => {
     const userInfo = {
       id: user.id,
       username: user.username,
+      isAdmin: user.isAdmin,
     };
 
     res.json({

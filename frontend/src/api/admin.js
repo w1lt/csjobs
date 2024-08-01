@@ -26,10 +26,10 @@ export const updateListing = async (listingId, listingData, token) => {
   return response.data;
 };
 
-export const updateUserRole = async (userId, isAdmin, token) => {
+export const updateUser = async (userId, userData, token) => {
   const response = await axios.put(
-    `${API_URL}/admin/users/${userId}role`,
-    { isAdmin },
+    `${API_URL}/admin/users/${userId}`,
+    userData,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -40,12 +40,46 @@ export const updateUserRole = async (userId, isAdmin, token) => {
   return response.data;
 };
 
+export const deleteUser = async (userId, token) => {
+  const response = await axios.delete(`${API_URL}/admin/users/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
 export const fetchReports = async (token) => {
   const response = await axios.get(`${API_URL}/reports`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
+  return response.data;
+};
+
+export const fetchUsers = async (token) => {
+  const response = await axios.get(`${API_URL}/admin/users`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const triggerScraping = async (token) => {
+  const response = await axios.post(
+    `${API_URL}/admin/scrape`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
 
   return response.data;
 };

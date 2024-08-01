@@ -1,3 +1,4 @@
+// controllers/reportController.js
 const { Report, Listing, User } = require("../models");
 
 const createReport = async (req, res) => {
@@ -20,11 +21,15 @@ const createReport = async (req, res) => {
 const getReports = async (req, res) => {
   try {
     const reports = await Report.findAll({
-      include: [{ model: Listing }, { model: User }],
+      include: [
+        { model: Listing, as: "listing" },
+        { model: User, as: "user" },
+      ],
     });
     res.json(reports);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    console.error("Error fetching reports:", error); // Log the error
+    res.status(500).json({ message: "Server error", error: error.message }); // Include error message in response
   }
 };
 

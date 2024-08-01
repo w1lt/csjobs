@@ -60,15 +60,14 @@ const ReportListingModal = ({ opened, onClose, listingId, listingTitle }) => {
         value={reason}
         onChange={(value) => setReason(value)}
       />
-      {reason === "other" && (
-        <Textarea
-          label="Message"
-          placeholder="Please provide more details"
-          value={message}
-          onChange={(event) => setMessage(event.currentTarget.value)}
-          mb="sm"
-        />
-      )}
+
+      <Textarea
+        label="Message"
+        placeholder="Provide more details... (optional)"
+        value={message}
+        onChange={(event) => setMessage(event.currentTarget.value)}
+        mb="sm"
+      />
       <Button fullWidth onClick={handleReport} loading={loading}>
         Submit Report
       </Button>

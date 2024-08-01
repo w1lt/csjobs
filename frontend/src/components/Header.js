@@ -9,11 +9,20 @@ import {
   IconMoon,
 } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
+import { useDisclosure } from "@mantine/hooks";
 import { useAuth } from "../context/AuthContext";
+import AuthModal from "./AuthModal";
+import AccountModal from "./AccountModal";
+import { useNavigate } from "react-router-dom";
 
-const Header = ({ openAccount, openAuth, logout }) => {
-  const { token } = useAuth();
+const Header = () => {
+  const { token, logout, login, user } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
+  const [accountOpened, { open: openAccount, close: closeAccount }] =
+    useDisclosure(false);
+  const [authOpened, { open: openAuth, close: closeAuth }] =
+    useDisclosure(false);
+  const navigate = useNavigate();
 
   return (
     <Flex
@@ -32,6 +41,7 @@ const Header = ({ openAccount, openAuth, logout }) => {
           transform: "translateX(-50%)",
           fontSize: "2rem",
         }}
+        onClick={() => navigate("/")}
       >
         csjobs.lol
       </Text>
@@ -57,6 +67,11 @@ const Header = ({ openAccount, openAuth, logout }) => {
             <>
               <Menu.Label>Account</Menu.Label>
               <Menu.Item onClick={openAccount}>My Account</Menu.Item>
+              {user.isAdmin && (
+                <Menu.Item onClick={() => navigate("/admin")}>
+                  Admin Page
+                </Menu.Item>
+              )}
               <Menu.Item c={"red"} onClick={() => logout()}>
                 Log Out
               </Menu.Item>
@@ -86,6 +101,8 @@ const Header = ({ openAccount, openAuth, logout }) => {
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
+      <AuthModal opened={authOpened} onClose={closeAuth} onLogin={login} />
+      <AccountModal opened={accountOpened} onClose={closeAccount} />
     </Flex>
   );
 };

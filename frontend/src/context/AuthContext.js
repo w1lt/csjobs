@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -11,10 +12,13 @@ export const AuthProvider = ({ children }) => {
   });
   const [appliedJobs, setAppliedJobs] = useState({});
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const login = (userToken, userInfo) => {
     setToken(userToken);
+    console.log(userToken);
     setUser(userInfo);
+    console.log(userInfo);
     localStorage.setItem("token", userToken);
     localStorage.setItem("user", JSON.stringify(userInfo));
     notifications.show({
@@ -28,6 +32,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     setToken(null);
     setUser(null);
+    navigate("/");
     setAppliedJobs({});
     localStorage.removeItem("token");
     localStorage.removeItem("user");

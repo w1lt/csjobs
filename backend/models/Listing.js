@@ -31,4 +31,9 @@ const Listing = sequelize.define("Listing", {
   },
 });
 
+// Define associations
+Listing.associate = (models) => {
+  Listing.hasMany(models.Report, { foreignKey: "listingId", as: "reports" });
+};
+
 module.exports = Listing;

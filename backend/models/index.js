@@ -1,8 +1,20 @@
-//models/index.js
 const User = require("./User");
 const Listing = require("./Listing");
 const Application = require("./Application");
 const Report = require("./Report");
+
+const models = {
+  User,
+  Listing,
+  Application,
+  Report,
+};
+
+Object.values(models).forEach((model) => {
+  if (model.associate) {
+    model.associate(models);
+  }
+});
 
 const syncModels = async () => {
   await User.sync({ alter: true });
@@ -11,4 +23,4 @@ const syncModels = async () => {
   await Report.sync({ alter: true });
 };
 
-module.exports = { User, Listing, Application, Report, syncModels };
+module.exports = { ...models, syncModels };

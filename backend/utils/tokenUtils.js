@@ -15,6 +15,7 @@ const validateToken = async (token) => {
         user: {
           id: user.id,
           username: user.username,
+          isAdmin: user.isAdmin,
         },
       };
     } else {

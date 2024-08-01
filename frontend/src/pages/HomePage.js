@@ -23,12 +23,14 @@ import {
 import { useMediaQuery, useDisclosure } from "@mantine/hooks";
 import Confetti from "react-confetti";
 import convertToDate from "../utils/convertToDate";
+import formatDate from "../utils/formatDate"; // Import the new formatDate function
 import AuthModal from "../components/AuthModal";
 import AccountModal from "../components/AccountModal";
 import ConfirmApplyModal from "../components/ConfirmApplyModal";
 import { useAuth } from "../context/AuthContext";
 import { notifications } from "@mantine/notifications";
 import Header from "../components/Header"; // Import Header component
+import { nprogress } from "@mantine/nprogress";
 
 const Homepage = () => {
   const [accountOpened, { open: openAccount, close: closeAccount }] =
@@ -64,14 +66,19 @@ const Homepage = () => {
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
+    if (loading) {
+      nprogress.start();
+    } else {
+      nprogress.complete();
+    }
+  }, [loading]);
+
+  useEffect(() => {
     const fetchApplications = async () => {
       if (!token) {
         setLoading(false);
         return;
       }
-
-      console.log("Fetching applications...");
-
       try {
         const data = await getApplications(token);
         console.log(data);
@@ -87,10 +94,12 @@ const Homepage = () => {
         console.error("Error fetching applications:", error);
       } finally {
         setLoading(false);
+        setLoading(false);
       }
     };
 
     const fetchListings = async () => {
+      setLoading(true);
       const data = await getListings();
       const sortedListings = [...data].sort(
         (a, b) => convertToDate(b.date) - convertToDate(a.date)
@@ -98,11 +107,12 @@ const Homepage = () => {
       setListings(sortedListings);
       if (token) {
         fetchApplications(sortedListings);
+      } else {
+        setLoading(false);
       }
     };
-    setLoading(true);
+
     fetchListings();
-    setLoading(false);
   }, [setLoading, token, setAppliedJobs]);
 
   const handleApplyClick = async (listingId, title) => {
@@ -314,7 +324,11 @@ const Homepage = () => {
     { Header: "Company", accessor: "company" },
     { Header: "Location", accessor: "location" },
     { Header: "Compensation", accessor: "compensation" },
-    { Header: "Date Posted", accessor: "date" },
+    {
+      Header: "Date Posted",
+      accessor: "date",
+      Cell: ({ value }) => formatDate(value),
+    },
     {
       Header: "Status",
       accessor: "action",
@@ -362,8 +376,6 @@ const Homepage = () => {
           numberOfPieces={50}
         />
       )}
-      <AuthModal opened={authOpened} onClose={closeAuth} onLogin={login} />
-      <AccountModal opened={accountOpened} onClose={closeAccount} />
       <ConfirmApplyModal
         opened={confirmApplyOpened}
         onClose={closeConfirmApply}

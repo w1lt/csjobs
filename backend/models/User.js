@@ -18,8 +18,16 @@ const User = sequelize.define("User", {
   },
 });
 
+User.beforeCreate(async (user) => {
+  const salt = await bcrypt.genSalt(10);
+  user.password = await bcrypt.hash(user.password, salt);
+});
+
 User.prototype.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+User.associate = (models) => {
+  User.hasMany(models.Report, { foreignKey: "userId", as: "reports" });
 };
 
 module.exports = User;

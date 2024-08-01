@@ -1,48 +1,48 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Container,
   Paper,
   Button,
   TextInput,
-  Checkbox,
   Title,
-  Group,
   Space,
-  Table,
-  Loader,
+  Modal,
+  Box,
+  Table as MantineTable,
+  Skeleton,
+  Select,
 } from "@mantine/core";
 import {
-  createListing,
-  updateListing,
-  updateUserRole,
   fetchReports,
-} from "../api/admin";
+  triggerScraping,
+  fetchUsers,
+  updateUser,
+} from "../api/admin"; // Import the new API function
 import { useAuth } from "../context/AuthContext";
 import { notifications } from "@mantine/notifications";
+import { useTable, useSortBy } from "react-table";
+import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import UsersTable from "../components/UsersTable";
+import { nprogress } from "@mantine/nprogress";
+import Header from "../components/Header";
 
 const AdminPage = () => {
-  const { token } = useAuth();
-  const [listingData, setListingData] = useState({
-    title: "",
-    company: "",
-    compensation: "",
-    location: "",
-    date: "",
-    link: "",
-    tags: "",
-  });
-  const [userId, setUserId] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { token, loading } = useAuth();
   const [reports, setReports] = useState([]);
-  const [loadingReports, setLoadingReports] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userForm, setUserForm] = useState({ username: "", isAdmin: false });
+  const [resolutionMessage, setResolutionMessage] = useState("");
 
   useEffect(() => {
     const loadReports = async () => {
+      nprogress.start();
       try {
         if (token) {
-          console.log(token);
           const data = await fetchReports(token);
           setReports(data);
+          console.log(data);
         }
       } catch (error) {
         notifications.show({
@@ -51,194 +51,283 @@ const AdminPage = () => {
           color: "red",
         });
       } finally {
-        setLoadingReports(false);
+        nprogress.complete();
       }
     };
 
     loadReports();
   }, [token]);
 
-  const handleListingChange = (e) => {
-    const { name, value } = e.target;
-    setListingData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        if (token) {
+          const data = await fetchUsers(token);
+          setUsers(data);
+        }
+      } catch (error) {
+        notifications.show({
+          title: "Error",
+          message: "Failed to fetch users",
+          color: "red",
+        });
+      }
+    };
+
+    loadUsers();
+  }, [token]);
+
+  const openResolveModal = (report) => {
+    setSelectedReport(report);
   };
 
-  const handleUserRoleChange = async () => {
+  const openUserModal = (user) => {
+    setSelectedUser(user);
+    setUserForm({ username: user.username, isAdmin: user.isAdmin });
+  };
+
+  const handleResolveReport = async () => {
     try {
-      await updateUserRole(userId, isAdmin, token);
       notifications.show({
         title: "Success",
-        message: "User role updated successfully",
+        message: "Report resolved successfully",
+        color: "green",
+      });
+      setReports(
+        reports.map((report) =>
+          report.id === selectedReport.id
+            ? { ...report, status: "resolved", resolutionMessage }
+            : report
+        )
+      );
+    } catch (error) {
+      notifications.show({
+        title: "Error",
+        message: "Failed to resolve report",
+        color: "red",
+      });
+    } finally {
+      setSelectedReport(null);
+      setResolutionMessage("");
+    }
+  };
+
+  const handleTriggerScraping = async () => {
+    try {
+      await triggerScraping(token);
+      notifications.show({
+        title: "Success",
+        message: "Scraping triggered successfully",
         color: "green",
       });
     } catch (error) {
       notifications.show({
         title: "Error",
-        message: "Failed to update user role",
+        message: `Failed to trigger scraping ${error}`,
         color: "red",
       });
     }
   };
 
-  const handleCreateListing = async () => {
+  const handleUserFormChange = (field, value) => {
+    setUserForm({ ...userForm, [field]: value });
+  };
+
+  const handleUpdateUser = async () => {
     try {
-      await createListing(listingData, token);
+      await updateUser(selectedUser.id, userForm, token);
       notifications.show({
         title: "Success",
-        message: "Listing created successfully",
+        message: "User updated successfully",
         color: "green",
       });
+      setUsers(
+        users.map((user) =>
+          user.id === selectedUser.id ? { ...user, ...userForm } : user
+        )
+      );
+      setSelectedUser(null);
     } catch (error) {
       notifications.show({
         title: "Error",
-        message: "Failed to create listing",
+        message: "Failed to update user",
         color: "red",
       });
     }
   };
 
-  const handleUpdateListing = async () => {
-    try {
-      await updateListing(listingData.id, listingData, token);
-      notifications.show({
-        title: "Success",
-        message: "Listing updated successfully",
-        color: "green",
-      });
-    } catch (error) {
-      notifications.show({
-        title: "Error",
-        message: "Failed to update listing",
-        color: "red",
-      });
-    }
-  };
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Listing",
+        accessor: "listing.title",
+      },
+      {
+        Header: "Reason",
+        accessor: "reason",
+      },
+      {
+        Header: "Message",
+        accessor: "message",
+      },
+      {
+        Header: "Status",
+        accessor: "status",
+      },
+      {
+        Header: "Action",
+        Cell: ({ row }) => (
+          <Button onClick={() => openResolveModal(row.original)}>
+            Resolve
+          </Button>
+        ),
+      },
+    ],
+    []
+  );
+
+  const data = useMemo(() => reports, [reports]);
+
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+      },
+      useSortBy
+    );
 
   return (
     <Container size="md" mt={16}>
+      <Header />
       <Title align="center" mb="lg">
         Admin Page
       </Title>
 
       <Paper shadow="md" p="lg" withBorder>
-        <Title order={3}>Create or Update Listing</Title>
-        <Space h="md" />
-        <TextInput
-          label="Title"
-          name="title"
-          value={listingData.title}
-          onChange={handleListingChange}
-          placeholder="Title"
-          mb="sm"
-        />
-        <TextInput
-          label="Company"
-          name="company"
-          value={listingData.company}
-          onChange={handleListingChange}
-          placeholder="Company"
-          mb="sm"
-        />
-        <TextInput
-          label="Compensation"
-          name="compensation"
-          value={listingData.compensation}
-          onChange={handleListingChange}
-          placeholder="Compensation"
-          mb="sm"
-        />
-        <TextInput
-          label="Location"
-          name="location"
-          value={listingData.location}
-          onChange={handleListingChange}
-          placeholder="Location"
-          mb="sm"
-        />
-        <TextInput
-          label="Date"
-          name="date"
-          value={listingData.date}
-          onChange={handleListingChange}
-          placeholder="Date"
-          mb="sm"
-        />
-        <TextInput
-          label="Link"
-          name="link"
-          value={listingData.link}
-          onChange={handleListingChange}
-          placeholder="Link"
-          mb="sm"
-        />
-        <TextInput
-          label="Tags"
-          name="tags"
-          value={listingData.tags}
-          onChange={handleListingChange}
-          placeholder="Tags"
-          mb="sm"
-        />
-        <Group position="apart" mt="md">
-          <Button onClick={handleCreateListing}>Create Listing</Button>
-          <Button onClick={handleUpdateListing}>Update Listing</Button>
-        </Group>
-      </Paper>
-
-      <Space h="xl" />
-
-      <Paper shadow="md" p="lg" withBorder>
-        <Title order={3}>Update User Role</Title>
-        <Space h="md" />
-        <TextInput
-          label="User ID"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="User ID"
-          mb="sm"
-        />
-        <Checkbox
-          label="Admin"
-          checked={isAdmin}
-          onChange={(e) => setIsAdmin(e.currentTarget.checked)}
-          mb="sm"
-        />
-        <Button onClick={handleUserRoleChange}>Update User Role</Button>
-      </Paper>
-
-      <Space h="xl" />
-
-      <Paper shadow="md" p="lg" withBorder>
         <Title order={3}>Reports</Title>
         <Space h="md" />
-        {loadingReports ? (
-          <Loader />
-        ) : (
-          <Table>
-            <thead>
-              <tr>
-                <th>Listing ID</th>
-                <th>Reason</th>
-                <th>Message</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reports.map((report) => (
-                <tr key={report.id}>
-                  <td>{report.listingId}</td>
-                  <td>{report.reason}</td>
-                  <td>{report.message}</td>
-                  <td>{report.status}</td>
-                </tr>
+
+        <div style={{ overflowX: "auto" }}>
+          <Skeleton visible={loading} />
+          <MantineTable
+            {...getTableProps()}
+            striped
+            highlightOnHover
+            withTableBorder
+            withColumnBorders
+            style={{ tableLayout: "auto", width: "100%" }}
+          >
+            <MantineTable.Thead>
+              {headerGroups.map((headerGroup) => (
+                <MantineTable.Tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map((column) => (
+                    <MantineTable.Th
+                      {...column.getHeaderProps(column.getSortByToggleProps())}
+                      style={{
+                        cursor: "pointer",
+                        padding: "4px 8px",
+                        textAlign: "left",
+                        whiteSpace: "normal",
+                      }}
+                    >
+                      {column.render("Header")}
+                      <span>
+                        {column.isSorted ? (
+                          column.isSortedDesc ? (
+                            <IconArrowDown size={16} />
+                          ) : (
+                            <IconArrowUp size={16} />
+                          )
+                        ) : (
+                          ""
+                        )}
+                      </span>
+                    </MantineTable.Th>
+                  ))}
+                </MantineTable.Tr>
               ))}
-            </tbody>
-          </Table>
-        )}
+            </MantineTable.Thead>
+            <MantineTable.Tbody {...getTableBodyProps()}>
+              {rows.map((row) => {
+                prepareRow(row);
+                return (
+                  <MantineTable.Tr {...row.getRowProps()}>
+                    {row.cells.map((cell) => (
+                      <MantineTable.Td
+                        {...cell.getCellProps()}
+                        style={{
+                          padding: "4px 8px",
+                          textAlign: "left",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {cell.render("Cell")}
+                      </MantineTable.Td>
+                    ))}
+                  </MantineTable.Tr>
+                );
+              })}
+            </MantineTable.Tbody>
+          </MantineTable>
+          <Skeleton />
+        </div>
+        <UsersTable openUserModal={openUserModal} users={users} />
+        <Space h="md" />
+        <Title order={3}>Actions</Title>
+        <Button onClick={handleTriggerScraping}>Trigger Scraping</Button>
       </Paper>
+
+      <Modal
+        opened={selectedReport !== null}
+        onClose={() => setSelectedReport(null)}
+        title="Resolve Report"
+      >
+        <Box mb="sm">
+          <TextInput
+            label="Resolution Message"
+            placeholder="Enter resolution message"
+            value={resolutionMessage}
+            onChange={(e) => setResolutionMessage(e.currentTarget.value)}
+          />
+        </Box>
+        <Button fullWidth onClick={handleResolveReport}>
+          Resolve
+        </Button>
+      </Modal>
+
+      <Modal
+        opened={selectedUser !== null}
+        onClose={() => setSelectedUser(null)}
+        title="Modify User"
+      >
+        <Box mb="sm">
+          <TextInput
+            label="Username"
+            placeholder="Enter username"
+            value={userForm.username}
+            onChange={(e) =>
+              handleUserFormChange("username", e.currentTarget.value)
+            }
+          />
+          <Select
+            label="Role"
+            placeholder="Select role"
+            data={[
+              { value: "true", label: "Admin" },
+              { value: "false", label: "User" },
+            ]}
+            value={userForm.isAdmin.toString()}
+            onChange={(value) =>
+              handleUserFormChange("isAdmin", value === "true")
+            }
+          />
+        </Box>
+        <Button fullWidth onClick={handleUpdateUser}>
+          Update User
+        </Button>
+      </Modal>
     </Container>
   );
 };

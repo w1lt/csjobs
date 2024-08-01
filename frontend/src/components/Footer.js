@@ -7,6 +7,7 @@ import {
   IconListLetters,
 } from "@tabler/icons-react";
 import { Flex } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (

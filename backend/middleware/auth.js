@@ -1,3 +1,4 @@
+//middleware/auth.js
 const jwt = require("jsonwebtoken");
 const { User } = require("../models");
 
@@ -33,6 +34,7 @@ const admin = (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next();
   } else {
+    console.log("Not authorized as an admin");
     res.status(403).json({ message: "Not authorized as an admin" });
   }
 };

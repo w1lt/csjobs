@@ -20,4 +20,9 @@ const Report = sequelize.define("Report", {
   },
 });
 
+Report.associate = (models) => {
+  Report.belongsTo(models.Listing, { foreignKey: "listingId", as: "listing" });
+  Report.belongsTo(models.User, { foreignKey: "userId", as: "user" });
+};
+
 module.exports = Report;

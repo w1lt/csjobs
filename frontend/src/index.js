@@ -19,11 +19,12 @@ root.render(
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <NavigationProgress />
       <Notifications />
-      <AuthProvider>
-        <Router>
+
+      <Router>
+        <AuthProvider>
           <App />
-        </Router>
-      </AuthProvider>
+        </AuthProvider>
+      </Router>
     </MantineProvider>
   </React.StrictMode>
 );

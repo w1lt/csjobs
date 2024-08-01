@@ -38,14 +38,7 @@ const formatPay = (pay) => {
   return "";
 };
 
-const CustomTable = ({
-  columns,
-  data,
-  appliedJobs,
-  handleApplyClick,
-  handleChangeStatus,
-  handleRemoveStatus,
-}) => {
+const CustomTable = ({ columns, data, appliedJobs }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [appliedFilter, setAppliedFilter] = useState("Show all");
@@ -172,7 +165,9 @@ const CustomTable = ({
 
         <Box mb={12} style={{ flexGrow: 1 }}>
           <InputLabel>Pay Range</InputLabel>
+
           <RangeSlider
+            mt={8}
             label={(value) => `$${value}/hour`}
             min={0}
             max={130}
@@ -180,11 +175,7 @@ const CustomTable = ({
             value={tempPayRange}
             onChange={setTempPayRange}
             onChangeEnd={setPayRange}
-            marks={[
-              { value: 0, label: "$0" },
-              { value: 65, label: "$65" },
-              { value: 130, label: "$130" },
-            ]}
+            marks={[{ value: 65, label: "$65" }]}
           />
         </Box>
       </Flex>
