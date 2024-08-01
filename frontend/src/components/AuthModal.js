@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import {
-  Modal,
   Button,
   TextInput,
   Box,
@@ -8,47 +7,33 @@ import {
   Anchor,
   Center,
 } from "@mantine/core";
-import { registerUser, loginUser } from "../api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext"; // Adjust the path as needed
 
-const AuthModal = ({ opened, onClose, onLogin, login = true }) => {
-  const [isLogin, setIsLogin] = useState(login);
+const AuthModal = ({ context, id, innerProps }) => {
+  const [isLogin, setIsLogin] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { loading, setLoading } = useAuth();
+  const { login, register, loading, setLoading } = useAuth();
 
   const handleSubmit = async () => {
     try {
       setLoading(true);
       if (isLogin) {
-        const data = await loginUser({ username, password });
-        onLogin(data.token, data.user);
+        await login({ username, password });
       } else {
-        await registerUser({ username, password });
-        setIsLogin(true);
+        await register({ username, password });
       }
       setLoading(false);
-      onClose();
+      context.closeModal(id);
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred");
       setLoading(false);
     }
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === "Enter") {
-      handleSubmit();
-    }
-  };
-
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title={isLogin ? "Login" : "Register"}
-      size="xs"
-    >
+    <>
       <LoadingOverlay visible={loading} zIndex={1000} />
       <Box mb="xs">
         <TextInput
@@ -56,7 +41,6 @@ const AuthModal = ({ opened, onClose, onLogin, login = true }) => {
           placeholder="Your username"
           value={username}
           onChange={(event) => setUsername(event.currentTarget.value)}
-          onKeyDown={handleKeyDown}
           required
         />
       </Box>
@@ -67,7 +51,6 @@ const AuthModal = ({ opened, onClose, onLogin, login = true }) => {
           type="password"
           value={password}
           onChange={(event) => setPassword(event.currentTarget.value)}
-          onKeyDown={handleKeyDown}
           required
         />
       </Box>
@@ -82,7 +65,7 @@ const AuthModal = ({ opened, onClose, onLogin, login = true }) => {
           {isLogin ? "Register" : "Login"} instead
         </Anchor>
       </Center>
-    </Modal>
+    </>
   );
 };
 

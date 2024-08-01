@@ -12,6 +12,7 @@ import "@mantine/core/styles.css";
 import "@mantine/nprogress/styles.css";
 import "@mantine/notifications/styles.css";
 import { AuthProvider } from "./context/AuthContext";
+import { MyModalsProvider } from "./context/Modals";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -22,7 +23,9 @@ root.render(
 
       <Router>
         <AuthProvider>
-          <App />
+          <MyModalsProvider>
+            <App />
+          </MyModalsProvider>
         </AuthProvider>
       </Router>
     </MantineProvider>

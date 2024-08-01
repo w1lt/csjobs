@@ -1,3 +1,4 @@
+// Header.js
 import React from "react";
 import { Flex, Text, Box, Menu, Button, Group } from "@mantine/core";
 import {
@@ -9,20 +10,29 @@ import {
   IconMoon,
 } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
-import { useDisclosure } from "@mantine/hooks";
 import { useAuth } from "../context/AuthContext";
-import AuthModal from "./AuthModal";
-import AccountModal from "./AccountModal";
 import { useNavigate } from "react-router-dom";
+import { modals } from "@mantine/modals";
 
 const Header = () => {
-  const { token, logout, login, user } = useAuth();
+  const { token, logout, user } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
-  const [accountOpened, { open: openAccount, close: closeAccount }] =
-    useDisclosure(false);
-  const [authOpened, { open: openAuth, close: closeAuth }] =
-    useDisclosure(false);
   const navigate = useNavigate();
+
+  const openAuthModal = () => {
+    modals.openContextModal({
+      size: "sm",
+      modal: "auth",
+      title: "Authentication",
+    });
+  };
+
+  const openAccountModal = () => {
+    modals.openContextModal({
+      modal: "account",
+      title: "Account",
+    });
+  };
 
   return (
     <Flex
@@ -66,7 +76,7 @@ const Header = () => {
           {token ? (
             <>
               <Menu.Label>Account</Menu.Label>
-              <Menu.Item onClick={openAccount}>My Account</Menu.Item>
+              <Menu.Item onClick={openAccountModal}>My Account</Menu.Item>
               {user.isAdmin && (
                 <Menu.Item onClick={() => navigate("/admin")}>
                   Admin Page
@@ -79,8 +89,7 @@ const Header = () => {
           ) : (
             <>
               <Menu.Label>Not logged in</Menu.Label>
-              <Menu.Item onClick={() => openAuth()}>Log In</Menu.Item>
-              <Menu.Item onClick={() => openAuth()}>Sign Up</Menu.Item>
+              <Menu.Item onClick={openAuthModal}>Log In</Menu.Item>
             </>
           )}
           <Menu.Divider />
@@ -101,8 +110,6 @@ const Header = () => {
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>
-      <AuthModal opened={authOpened} onClose={closeAuth} onLogin={login} />
-      <AccountModal opened={accountOpened} onClose={closeAccount} />
     </Flex>
   );
 };

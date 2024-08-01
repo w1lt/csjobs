@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, TextInput, Box } from "@mantine/core";
+import { Button, TextInput, Box } from "@mantine/core";
 import { useAuth } from "../context/AuthContext";
 
 const AccountModal = ({ opened, onClose }) => {
@@ -10,7 +10,7 @@ const AccountModal = ({ opened, onClose }) => {
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="My Account" size="sm">
+    <>
       <Box mb="xs">
         <TextInput
           label="Username"
@@ -24,7 +24,7 @@ const AccountModal = ({ opened, onClose }) => {
           Save
         </Button>
       </Box>
-    </Modal>
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { registerUser, loginUser } from "../api";
 
 const AuthContext = createContext();
 
@@ -14,29 +15,48 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const login = (userToken, userInfo) => {
-    setToken(userToken);
-    console.log(userToken);
-    setUser(userInfo);
-    console.log(userInfo);
-    localStorage.setItem("token", userToken);
-    localStorage.setItem("user", JSON.stringify(userInfo));
-    notifications.show({
-      title: "Welcome back",
-      message: `Welcome back, ${userInfo.username}!`,
-      color: "blue",
-    });
+  const login = async (userInfo) => {
+    try {
+      const response = await loginUser(userInfo);
+      const userToken = response.token;
+      setToken(userToken);
+      setUser(response.user);
+      localStorage.setItem("token", userToken);
+      localStorage.setItem("user", JSON.stringify(response.user));
+      notifications.show({
+        title: "Welcome back",
+        message: `Welcome back, ${response.user.username}!`,
+        color: "blue",
+      });
+    } catch (error) {
+      notifications.show({
+        title: "Login failed",
+        message: error.response?.data?.message || "An error occurred",
+        color: "red",
+      });
+    }
+  };
+
+  const register = async (userInfo) => {
+    try {
+      await registerUser(userInfo);
+      await login(userInfo);
+    } catch (error) {
+      notifications.show({
+        title: "Registration failed",
+        message: error.response?.data?.message || "An error occurred",
+        color: "red",
+      });
+    }
   };
 
   const logout = () => {
-    setLoading(true);
     setToken(null);
     setUser(null);
     navigate("/");
     setAppliedJobs({});
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    setLoading(false);
     notifications.show({
       title: "Logged out",
       message: "You have been logged out.",
@@ -64,6 +84,7 @@ export const AuthProvider = ({ children }) => {
         appliedJobs,
         setAppliedJobs,
         login,
+        register,
         logout,
         loading,
         setLoading,

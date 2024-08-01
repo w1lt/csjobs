@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Modal, Textarea, Button, Text, Select } from "@mantine/core";
+import { Textarea, Button, Text, Select } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { reportListing } from "../api";
 import { useAuth } from "../context/AuthContext";
 
-const ReportListingModal = ({ opened, onClose, listingId, listingTitle }) => {
+const ReportListingModal = ({ innerProps }) => {
   const { token } = useAuth();
   const [reason, setReason] = useState("");
   const [message, setMessage] = useState("");
@@ -15,13 +15,15 @@ const ReportListingModal = ({ opened, onClose, listingId, listingTitle }) => {
     try {
       if (token) {
         console.log("Submitting report with token:", token);
-        await reportListing({ listingId, reason, message }, token);
+        await reportListing(
+          { listingId: innerProps.listingId, reason, message },
+          token
+        );
         notifications.show({
           title: "Report submitted",
           message: "Your report has been submitted successfully.",
           color: "green",
         });
-        onClose();
       } else {
         notifications.show({
           title: "Please log in",
@@ -42,9 +44,9 @@ const ReportListingModal = ({ opened, onClose, listingId, listingTitle }) => {
   };
 
   return (
-    <Modal opened={opened} onClose={onClose} title="Report Listing">
+    <>
       <Text size="sm" mb="sm">
-        Reporting: {listingTitle}
+        Reporting: {innerProps.listingTitle}
       </Text>
       <Select
         label="Reason"
@@ -71,7 +73,7 @@ const ReportListingModal = ({ opened, onClose, listingId, listingTitle }) => {
       <Button fullWidth onClick={handleReport} loading={loading}>
         Submit Report
       </Button>
-    </Modal>
+    </>
   );
 };
 

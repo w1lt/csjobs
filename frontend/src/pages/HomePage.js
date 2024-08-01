@@ -10,7 +10,6 @@ import {
 } from "@mantine/core";
 import { getListings, applyOrUpdateApplication, getApplications } from "../api";
 import CustomTable from "../components/CustomTable";
-import ReportListingModal from "../components/ReportListingModal";
 import {
   IconLoader,
   IconTie,
@@ -18,51 +17,29 @@ import {
   IconSquareArrowUp,
   IconRestore,
   IconUpload,
-  IconZoomExclamation,
+  IconAlertTriangleFilled,
 } from "@tabler/icons-react";
-import { useMediaQuery, useDisclosure } from "@mantine/hooks";
+import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
 import convertToDate from "../utils/convertToDate";
 import formatDate from "../utils/formatDate"; // Import the new formatDate function
-import AuthModal from "../components/AuthModal";
-import AccountModal from "../components/AccountModal";
-import ConfirmApplyModal from "../components/ConfirmApplyModal";
 import { useAuth } from "../context/AuthContext";
 import { notifications } from "@mantine/notifications";
 import Header from "../components/Header"; // Import Header component
 import { nprogress } from "@mantine/nprogress";
+import { modals } from "@mantine/modals";
 
 const Homepage = () => {
-  const [accountOpened, { open: openAccount, close: closeAccount }] =
-    useDisclosure(false);
-  const [
-    confirmApplyOpened,
-    { open: openConfirmApply, close: closeConfirmApply },
-  ] = useDisclosure(false);
-  const [reportOpened, { open: openReport, close: closeReport }] =
-    useDisclosure(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const [currentListingId, setCurrentListingId] = useState(null);
-  const [currentJobTitle, setCurrentJobTitle] = useState("");
   const [confettiVisible, setConfettiVisible] = useState(false);
   const { width, height } = {
     width: window.innerWidth,
     height: window.innerHeight,
   };
   const [selectedFilter] = useState("");
-  const [authOpened, { open: openAuth, close: closeAuth }] =
-    useDisclosure(false);
   const [loadingListingId, setLoadingListingId] = useState(null);
 
-  const {
-    token,
-    appliedJobs,
-    setAppliedJobs,
-    login,
-    setLoading,
-    loading,
-    logout,
-  } = useAuth();
+  const { token, appliedJobs, setAppliedJobs, setLoading, loading } = useAuth();
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
@@ -115,52 +92,35 @@ const Homepage = () => {
     fetchListings();
   }, [setLoading, token, setAppliedJobs]);
 
-  const handleApplyClick = async (listingId, title) => {
-    if (!appliedJobs[listingId]) {
-      setCurrentListingId(listingId);
-      setCurrentJobTitle(title);
-      openConfirmApply();
-      const listing = listings.find((listing) => listing.id === listingId);
-      window.open(listing.link, "_blank");
-    }
+  const openReportListingModal = (listingId, listingTitle) => {
+    modals.openContextModal({
+      modal: "reportListing",
+      title: "Report Listing",
+      innerProps: {
+        listingId: listingId,
+        listingTitle: listingTitle,
+      },
+    });
   };
 
-  const handleConfirmApply = async () => {
-    try {
-      if (token) {
-        closeConfirmApply();
-        const applicationData = {
-          listingId: currentListingId,
-          status: "pending",
-        };
-        console.log("Sending application data:", applicationData);
-        setLoading(true);
-        setLoadingListingId(currentListingId);
-        await applyOrUpdateApplication(applicationData, token);
+  const openConfirmApplyModal = (listingId, title) => {
+    modals.openContextModal({
+      modal: "confirmApply",
+      title: "Confirm Application",
+      innerProps: {
+        currentListingId: listingId,
+        setLoadingListingId: setLoadingListingId,
+        setConfettiVisible: setConfettiVisible,
+        jobTitle: title,
+      },
+    });
+  };
 
-        const updatedAppliedJobs = {
-          ...appliedJobs,
-          [currentListingId]: { status: "pending", title: currentJobTitle },
-        };
-        setAppliedJobs(updatedAppliedJobs);
-
-        setLoading(false);
-        setLoadingListingId(null);
-        setConfettiVisible(true);
-        setTimeout(() => {
-          setConfettiVisible(false);
-        }, 10000);
-      } else {
-        closeConfirmApply();
-        notifications.show({
-          title: "Please log in",
-          message: "You must be logged in to save jobs.",
-          color: "red",
-        });
-        openAuth();
-      }
-    } catch (error) {
-      console.error("Error confirming application:", error);
+  const handleApplyClick = async (listingId, title) => {
+    if (!appliedJobs[listingId]) {
+      openConfirmApplyModal(listingId, title);
+      const listing = listings.find((listing) => listing.id === listingId);
+      window.open(listing.link, "_blank");
     }
   };
 
@@ -206,12 +166,6 @@ const Homepage = () => {
     } catch (error) {
       console.error("Error removing application status:", error);
     }
-  };
-
-  const handleReportListing = (listingId, title) => {
-    setCurrentListingId(listingId);
-    setCurrentJobTitle(title);
-    openReport();
   };
 
   const filteredListings = listings.filter((listing) => {
@@ -296,8 +250,10 @@ const Homepage = () => {
             </Menu.Item>
             <Menu.Divider />
             <Menu.Item
-              leftSection={<IconZoomExclamation size={18} />}
-              onClick={() => handleReportListing(listingId, row.original.title)}
+              leftSection={<IconAlertTriangleFilled size={18} />}
+              onClick={() =>
+                openReportListingModal(listingId, row.original.title)
+              }
             >
               Report Listing
             </Menu.Item>
@@ -342,7 +298,7 @@ const Homepage = () => {
 
   return (
     <Container size="md" mt={16}>
-      <Header openAccount={openAccount} openAuth={openAuth} logout={logout} />
+      <Header />
       <Space h="xs" />
       <Text align="center" size="lg" mb="sm" c="dimmed">
         Browse, apply, and secure your dream internship. New listings added
@@ -376,19 +332,6 @@ const Homepage = () => {
           numberOfPieces={50}
         />
       )}
-      <ConfirmApplyModal
-        opened={confirmApplyOpened}
-        onClose={closeConfirmApply}
-        onConfirm={handleConfirmApply}
-        jobTitle={currentJobTitle}
-        loading={loading}
-      />
-      <ReportListingModal
-        opened={reportOpened}
-        onClose={closeReport}
-        listingId={currentListingId}
-        listingTitle={currentJobTitle}
-      />
     </Container>
   );
 };
