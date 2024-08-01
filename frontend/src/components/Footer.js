@@ -13,7 +13,15 @@ const Footer = () => {
     <Container size="md">
       <Space h="xl" />
       <Text align="center" size="sm">
-        &copy; {new Date().getFullYear()} csjobs.lol. All rights reserved.
+        &copy; {new Date().getFullYear()} csjobs.lol{" - "}
+        <Anchor
+          href="https://status.csjobs.lol/"
+          target="
+        _blank 
+        "
+        >
+          Server Status
+        </Anchor>
       </Text>
       <Space h="md" />
       <Center>
