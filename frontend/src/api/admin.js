@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_URL =
-  process.env.REACT_APP_API_URL || "https://csjobs-backend.onrender.com/api";
+const API_URL = process.env.REACT_APP_API_URL || "https://api.csjobs.lol";
 
 export const createListing = async (listingData, token) => {
   const response = await axios.post(`${API_URL}/admin/listings`, listingData, {

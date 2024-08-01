@@ -41,11 +41,11 @@ const startServer = async () => {
     app.use(limiter);
 
     // Define routes
-    app.use("/api/auth", authRoutes);
-    app.use("/api/admin", adminRoutes);
-    app.use("/api/listings", listingRoutes);
-    app.use("/api/applications", applicationRoutes);
-    app.use("/api/reports", reportRoutes);
+    app.use("/auth", authRoutes);
+    app.use("/admin", adminRoutes);
+    app.use("/listings", listingRoutes);
+    app.use("/applications", applicationRoutes);
+    app.use("/reports", reportRoutes);
 
     // Start the server
     const PORT = process.env.PORT || 5000;
