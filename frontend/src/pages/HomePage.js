@@ -16,9 +16,11 @@ import {
   IconExclamationCircle,
   IconSquareArrowUp,
   IconRestore,
+  IconUpload,
   IconAlertTriangleFilled,
   IconEdit,
   IconTrash,
+  IconCopy,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
@@ -143,6 +145,14 @@ const Homepage = () => {
     }
   };
 
+  const shareListing = (link) => {
+    navigator.clipboard.writeText(link);
+    notifications.show({
+      title: "Link copied",
+      message: `The link has been copied to your clipboard!`,
+    });
+  };
+
   const handleChangeStatus = async (listingId, status) => {
     try {
       setLoading(true);
@@ -253,7 +263,12 @@ const Homepage = () => {
             >
               View Application
             </Menu.Item>
-
+            <Menu.Item
+              leftSection={<IconCopy size={18} />}
+              onClick={() => shareListing(row.original.link)}
+            >
+              Copy Link
+            </Menu.Item>
             <Menu.Divider />
             <Menu.Item
               leftSection={<IconAlertTriangleFilled size={18} />}
