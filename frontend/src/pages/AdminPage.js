@@ -11,13 +11,14 @@ import {
   Table as MantineTable,
   Skeleton,
   Select,
+  Text,
 } from "@mantine/core";
 import {
   fetchReports,
   triggerScraping,
   fetchUsers,
   updateUser,
-} from "../api/admin"; // Import the new API function
+} from "../api/admin"; // Import the necessary API functions
 import { useAuth } from "../context/AuthContext";
 import { notifications } from "@mantine/notifications";
 import { useTable, useSortBy } from "react-table";
@@ -35,6 +36,7 @@ const AdminPage = () => {
   const [userForm, setUserForm] = useState({ username: "", isAdmin: false });
   const [resolutionMessage, setResolutionMessage] = useState("");
 
+  // Load reports and users data
   useEffect(() => {
     const loadReports = async () => {
       nprogress.start();
@@ -77,6 +79,7 @@ const AdminPage = () => {
     loadUsers();
   }, [token]);
 
+  // Modal functions for reports and users
   const openResolveModal = (report) => {
     setSelectedReport(report);
   };
@@ -86,6 +89,7 @@ const AdminPage = () => {
     setUserForm({ username: user.username, isAdmin: user.isAdmin });
   };
 
+  // Handle report resolution
   const handleResolveReport = async () => {
     try {
       notifications.show({
@@ -112,6 +116,7 @@ const AdminPage = () => {
     }
   };
 
+  // Trigger the scraping process
   const handleTriggerScraping = async () => {
     try {
       const id = notifications.show({
@@ -141,10 +146,12 @@ const AdminPage = () => {
     }
   };
 
+  // Handle user form changes
   const handleUserFormChange = (field, value) => {
     setUserForm({ ...userForm, [field]: value });
   };
 
+  // Handle user update
   const handleUpdateUser = async () => {
     try {
       await updateUser(selectedUser.id, userForm, token);
@@ -168,6 +175,7 @@ const AdminPage = () => {
     }
   };
 
+  // Table columns for reports
   const columns = useMemo(
     () => [
       {
@@ -198,8 +206,10 @@ const AdminPage = () => {
     []
   );
 
+  // Report data
   const data = useMemo(() => reports, [reports]);
 
+  // Table hooks
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
       {
@@ -219,6 +229,11 @@ const AdminPage = () => {
       <Paper shadow="md" p="lg" withBorder>
         <Title order={3}>Reports</Title>
         <Space h="md" />
+
+        {/* Display the total number of users */}
+        <Text size="lg" weight={500} mb="sm">
+          Total Users: {users.length}
+        </Text>
 
         <div style={{ overflowX: "auto" }}>
           <Skeleton visible={loading} />
@@ -285,12 +300,15 @@ const AdminPage = () => {
           </MantineTable>
           <Skeleton />
         </div>
+
+        {/* Render the UsersTable component */}
         <UsersTable openUserModal={openUserModal} users={users} />
         <Space h="md" />
         <Title order={3}>Actions</Title>
         <Button onClick={handleTriggerScraping}>Trigger Scraping</Button>
       </Paper>
 
+      {/* Modal for resolving reports */}
       <Modal
         opened={selectedReport !== null}
         onClose={() => setSelectedReport(null)}
@@ -309,6 +327,7 @@ const AdminPage = () => {
         </Button>
       </Modal>
 
+      {/* Modal for modifying users */}
       <Modal
         opened={selectedUser !== null}
         onClose={() => setSelectedUser(null)}
@@ -317,7 +336,7 @@ const AdminPage = () => {
         <Box mb="sm">
           <TextInput
             label="Username"
-            placeholxr="Enter username"
+            placeholder="Enter username"
             value={userForm.username}
             onChange={(e) =>
               handleUserFormChange("username", e.currentTarget.value)
