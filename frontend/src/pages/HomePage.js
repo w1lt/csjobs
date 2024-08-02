@@ -19,7 +19,6 @@ import {
   IconUpload,
   IconAlertTriangleFilled,
   IconEdit,
-  IconDotsVertical,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
@@ -279,19 +278,18 @@ const Homepage = () => {
               size="xs"
               fullWidth
               loading={loadingListingId === listingId}
-              rightSection={<IconDotsVertical size={18} />}
               onClick={() => handleApplyClick(listingId, row.original.title)}
             >
               Apply
             </Button>
           </Menu.Target>
           <Menu.Dropdown>
-            <Menu.Label>Actions</Menu.Label>
+            <Menu.Label>Other Actions</Menu.Label>
             <Menu.Item
               leftSection={<IconSquareArrowUp size={18} />}
               onClick={() => window.open(row.original.link, "_blank")}
             >
-              Open Application
+              View Application
             </Menu.Item>
             <Menu.Item
               leftSection={<IconAlertTriangleFilled size={18} />}
@@ -344,9 +342,6 @@ const Homepage = () => {
         Browse, apply, and secure your dream internship. New listings added
         daily.
       </Text>
-      <Text c="dimmed" align="center" size="sm" mb={16}>
-        Last updated: July 29
-      </Text>
       <Paper shadow="md" py="sm" withBorder>
         <Container>
           <CustomTable
@@ -359,7 +354,7 @@ const Homepage = () => {
           />
           <Flex justify="center" align="center" direction="row" mt="lg">
             <Text align="center" c="dimmed">
-              More jobs coming soon...
+              + More jobs coming soon...
             </Text>
           </Flex>
         </Container>

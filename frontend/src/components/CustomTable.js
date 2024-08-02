@@ -7,11 +7,18 @@ import {
   Select,
   Flex,
   Box,
-  RangeSlider,
-  InputLabel,
   Tooltip,
+  Button,
+  Collapse,
+  Group,
 } from "@mantine/core";
-import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import { useDisclosure } from "@mantine/hooks";
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconFilter,
+  IconFilterOff,
+} from "@tabler/icons-react";
 
 const GlobalFilter = ({
   preGlobalFilteredRows,
@@ -40,15 +47,20 @@ const normalizeCompensation = (compensation) => {
   } else if (typeof compensation === "number") {
     return `$${compensation}/hour`;
   }
-  return "N/A"; // Handle null, empty array, and other cases
+  return ""; // Handle null, empty array, and other cases
 };
 
 const CustomTable = ({ columns, data, appliedJobs }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [appliedFilter, setAppliedFilter] = useState("Show all");
-  const [payRange, setPayRange] = useState([0, 130]);
-  const [tempPayRange, setTempPayRange] = useState([0, 130]);
+  const [minPay, setMinPay] = useState("0");
+  const [opened, { toggle }] = useDisclosure(false);
+
+  const handleMinPayChange = (e) => {
+    const value = e.target.value;
+    setMinPay(value);
+  };
 
   // Sort data by date before passing to the table
   const sortedData = useMemo(() => {
@@ -70,7 +82,8 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
         pay = [listing.compensation, listing.compensation];
       }
 
-      const isWithinRange = pay[0] >= payRange[0] && pay[1] <= payRange[1];
+      const isAboveMinPay =
+        minPay === "" || pay[0] >= Number(minPay) || pay[1] >= Number(minPay);
 
       if (
         selectedFilter &&
@@ -93,7 +106,7 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
       ) {
         return false;
       }
-      return isWithinRange;
+      return isAboveMinPay;
     });
   }, [
     sortedData,
@@ -101,7 +114,7 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
     locationFilter,
     appliedFilter,
     appliedJobs,
-    payRange,
+    minPay,
   ]);
 
   const {
@@ -139,7 +152,7 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
       const firstLocation = location[0];
       const allLocations = location.join(", ");
       return (
-        <Tooltip label={allLocations} multiline>
+        <Tooltip withArrow label={allLocations} multiline w={150}>
           <span>
             {firstLocation}
             {location.length > 1 && ` + ${location.length - 1} more`}
@@ -152,62 +165,67 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
 
   return (
     <>
-      <Box mb="md">
-        <GlobalFilter
-          preGlobalFilteredRows={preGlobalFilteredRows}
-          globalFilter={state.globalFilter}
-          setGlobalFilter={setGlobalFilter}
-        />
-      </Box>
-
-      <Flex align="flex-start" wrap="wrap" gap="md" mb="md">
-        <Autocomplete
-          label="Job Type"
-          placeholder="Select a job type"
-          data={filterOptions}
-          value={selectedFilter}
-          onChange={setSelectedFilter}
-        />
-
-        <Autocomplete
-          label="Location"
-          placeholder="Select a location"
-          data={locationOptions}
-          value={locationFilter}
-          onChange={setLocationFilter}
-        />
-
-        <Select
-          label="Applied Status"
-          placeholder="Select filter"
-          data={[
-            { value: "Show all", label: "Show all" },
-            {
-              value: "Show only applied jobs",
-              label: "Show only applied jobs",
-            },
-            { value: "Hide applied jobs", label: "Hide applied jobs" },
-          ]}
-          value={appliedFilter}
-          onChange={setAppliedFilter}
-        />
-
-        <Box mb={12} style={{ flexGrow: 1 }}>
-          <InputLabel>Pay Range</InputLabel>
-
-          <RangeSlider
-            mt={8}
-            label={(value) => `$${value}/hour`}
-            min={0}
-            max={130}
-            step={1}
-            value={tempPayRange}
-            onChange={setTempPayRange}
-            onChangeEnd={setPayRange}
-            marks={[{ value: 65, label: "$65" }]}
+      <Group justify="space-between" align="flex-end" spacing="sm" mb="md">
+        <Box style={{ flex: 1 }}>
+          <GlobalFilter
+            preGlobalFilteredRows={preGlobalFilteredRows}
+            globalFilter={state.globalFilter}
+            setGlobalFilter={setGlobalFilter}
           />
         </Box>
-      </Flex>
+        <Button
+          rightSection={
+            opened ? <IconFilterOff size={18} /> : <IconFilter size={20} />
+          }
+          onClick={toggle}
+        >
+          {opened ? "Hide" : ""} Filters
+        </Button>
+      </Group>
+
+      <Box mb="md">
+        <Collapse in={opened}>
+          <Flex justify={"space-between"}>
+            <Autocomplete
+              label="Job Type"
+              placeholder="Select a job type"
+              data={filterOptions}
+              value={selectedFilter}
+              onChange={setSelectedFilter}
+            />
+
+            <Autocomplete
+              label="Location"
+              placeholder="Select a location"
+              data={locationOptions}
+              value={locationFilter}
+              onChange={setLocationFilter}
+            />
+            <TextInput
+              type="number"
+              label="Minimum Pay"
+              value={minPay}
+              onChange={handleMinPayChange}
+              leftSection={"$"}
+            />
+
+            <Select
+              label="Applied Status"
+              placeholder="Select filter"
+              data={[
+                { value: "Show all", label: "Show all" },
+                {
+                  value: "Show only applied jobs",
+                  label: "Show only applied jobs",
+                },
+                { value: "Hide applied jobs", label: "Hide applied jobs" },
+              ]}
+              value={appliedFilter}
+              onChange={setAppliedFilter}
+            />
+          </Flex>
+        </Collapse>
+      </Box>
 
       <div style={{ overflowX: "auto" }}>
         <Table
