@@ -16,7 +16,6 @@ import {
   IconExclamationCircle,
   IconSquareArrowUp,
   IconRestore,
-  IconUpload,
   IconAlertTriangleFilled,
   IconEdit,
   IconTrash,
