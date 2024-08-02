@@ -18,6 +18,7 @@ import {
   IconRestore,
   IconUpload,
   IconAlertTriangleFilled,
+  IconEdit,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
@@ -41,11 +42,18 @@ const Homepage = () => {
   const { token, appliedJobs, setAppliedJobs, setLoading } = useAuth();
   const [listings, setListings] = useState([]);
 
+  const openEditModal = (listingId) => {
+    modals.openContextModal({
+      title: "Edit Listing",
+      modal: "editListing",
+      innerProps: { listingId },
+    });
+  };
+
   useEffect(() => {
     const fetchApplications = async () => {
       try {
         const data = await getApplications(token);
-        console.log(data);
         const applied = {};
         data.forEach((app) => {
           applied[app.ListingId] = {
@@ -57,7 +65,6 @@ const Homepage = () => {
       } catch (error) {
         console.error("Error fetching applications:", error);
       } finally {
-        console.log("fetched");
         setLoading(false);
       }
     };
@@ -65,12 +72,13 @@ const Homepage = () => {
     const fetchListings = async () => {
       setLoading(true);
       const data = await getListings();
+      console.log("Fetched listings:", data); // Debug statement
       const sortedListings = [...data].sort(
         (a, b) => convertToDate(b.date) - convertToDate(a.date)
       );
       setListings(sortedListings);
       if (token) {
-        fetchApplications(sortedListings);
+        fetchApplications();
       } else {
         setLoading(false);
       }
@@ -244,6 +252,12 @@ const Homepage = () => {
             >
               Report Listing
             </Menu.Item>
+            <Menu.Item
+              leftSection={<IconEdit size={18} />}
+              onClick={() => openEditModal(listingId)}
+            >
+              Edit Listing
+            </Menu.Item>
           </Menu.Dropdown>
         </Menu>
       );
@@ -284,7 +298,7 @@ const Homepage = () => {
   );
 
   return (
-    <Container size="md" mt={16}>
+    <Container size="md">
       <Header />
       <Space h="xs" />
       <Text align="center" size="lg" mb="sm" c="dimmed">

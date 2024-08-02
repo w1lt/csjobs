@@ -11,7 +11,7 @@ const Listing = sequelize.define("Listing", {
     allowNull: false,
   },
   compensation: {
-    type: DataTypes.ARRAY(DataTypes.INTEGER), // Assuming compensation is an array of integers
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
   },
   location: {
     type: DataTypes.ARRAY(DataTypes.STRING),

@@ -5,6 +5,7 @@ import AuthModal from "../components/AuthModal"; // Adjust the path as needed
 import accountModal from "../components/AccountModal"; // Adjust the path as needed
 import ReportListingModal from "../components/ReportListingModal";
 import ConfirmApplyModal from "../components/ConfirmApplyModal";
+import EditListingModal from "../components/EditListingModal";
 
 export const MyModalsProvider = ({ children }) => {
   return (
@@ -14,6 +15,7 @@ export const MyModalsProvider = ({ children }) => {
         account: accountModal,
         reportListing: ReportListingModal,
         confirmApply: ConfirmApplyModal,
+        editListing: EditListingModal,
       }}
     >
       {children}

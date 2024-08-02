@@ -198,7 +198,7 @@ const AdminPage = () => {
     );
 
   return (
-    <Container size="md" mt={16}>
+    <Container size="md">
       <Header />
       <Title align="center" mb="lg">
         Admin Page

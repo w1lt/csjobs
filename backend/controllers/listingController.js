@@ -1,10 +1,22 @@
-//controllers/listingController.js
 const { Listing } = require("../models");
 
 const getListings = async (req, res) => {
   try {
     const listings = await Listing.findAll();
     res.json(listings);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getListingDetails = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Listing.findByPk(id);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+    res.json(listing);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
@@ -33,4 +45,24 @@ const updateListing = async (req, res) => {
   }
 };
 
-module.exports = { getListings, createListing, updateListing };
+const deleteListing = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const listing = await Listing.findByPk(id);
+    if (!listing) {
+      return res.status(404).json({ message: "Listing not found" });
+    }
+    await listing.destroy();
+    res.json({ message: "Listing deleted" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+module.exports = {
+  getListings,
+  createListing,
+  updateListing,
+  getListingDetails,
+  deleteListing,
+};

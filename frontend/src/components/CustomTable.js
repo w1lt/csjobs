@@ -29,27 +29,43 @@ const GlobalFilter = ({
   );
 };
 
-const formatPay = (pay) => {
-  if (Array.isArray(pay)) {
-    return `$${pay[0]} - $${pay[1]}/hour`;
-  } else if (typeof pay === "number") {
-    return `$${pay}/hour`;
+const normalizeCompensation = (compensation) => {
+  if (Array.isArray(compensation)) {
+    if (compensation.length === 2) {
+      return `$${compensation[0]} - $${compensation[1]}/hour`;
+    } else if (compensation.length === 1) {
+      return `$${compensation[0]}/hour`;
+    }
+  } else if (typeof compensation === "number") {
+    return `$${compensation}/hour`;
   }
-  return "";
+  return "N/A"; // Handle null, empty array, and other cases
 };
 
 const CustomTable = ({ columns, data, appliedJobs }) => {
   const [selectedFilter, setSelectedFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [appliedFilter, setAppliedFilter] = useState("Show all");
-  const [payRange, setPayRange] = useState([0, 130]); // Assuming pay range from $0 to $75
+  const [payRange, setPayRange] = useState([0, 130]);
   const [tempPayRange, setTempPayRange] = useState([0, 130]);
 
+  // Sort data by date before passing to the table
+  const sortedData = useMemo(() => {
+    return [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
+  }, [data]);
+
   const filteredData = useMemo(() => {
-    return data.filter((listing) => {
-      const pay = Array.isArray(listing.compensation)
-        ? listing.compensation
-        : [listing.compensation, listing.compensation];
+    return sortedData.filter((listing) => {
+      let pay = [0, 0];
+      if (
+        Array.isArray(listing.compensation) &&
+        listing.compensation.length > 0
+      ) {
+        pay = listing.compensation;
+      } else if (typeof listing.compensation === "number") {
+        pay = [listing.compensation, listing.compensation];
+      }
+
       const isWithinRange = pay[0] >= payRange[0] && pay[1] <= payRange[1];
 
       if (
@@ -68,15 +84,15 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
       }
       if (
         (appliedFilter === "Show only applied jobs" &&
-          !appliedJobs[listing.url]) ||
-        (appliedFilter === "Hide applied jobs" && appliedJobs[listing.url])
+          !appliedJobs[listing.id]) ||
+        (appliedFilter === "Hide applied jobs" && appliedJobs[listing.id])
       ) {
         return false;
       }
       return isWithinRange;
     });
   }, [
-    data,
+    sortedData,
     selectedFilter,
     locationFilter,
     appliedFilter,
@@ -251,7 +267,7 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
                         {cell.column.id === "location"
                           ? renderLocation(cell.value)
                           : cell.column.id === "compensation"
-                          ? formatPay(cell.value)
+                          ? normalizeCompensation(cell.value)
                           : cell.render("Cell")}
                       </Table.Td>
                     );

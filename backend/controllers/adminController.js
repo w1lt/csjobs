@@ -1,29 +1,6 @@
 const { Listing, User, Report } = require("../models");
 const axios = require("axios");
 
-const createListing = async (req, res) => {
-  try {
-    const listing = await Listing.create(req.body);
-    res.status(201).json(listing);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-const updateListing = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const listing = await Listing.findByPk(id);
-    if (!listing) {
-      return res.status(404).json({ message: "Listing not found" });
-    }
-    await listing.update(req.body);
-    res.json(listing);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
 const updateUser = async (req, res) => {
   const { id } = req.params;
 
@@ -126,8 +103,6 @@ const ping = (req, res) => {
 };
 
 module.exports = {
-  createListing,
-  updateListing,
   updateUser,
   fetchReports,
   fetchUsers,
