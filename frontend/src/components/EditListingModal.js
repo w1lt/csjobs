@@ -82,7 +82,6 @@ const EditListingModal = ({ context, id, innerProps }) => {
       await deleteListing(innerProps.listingId, token);
       setLoading(false);
       context.closeModal(id);
-      window.location.reload(); // Reload the page to reflect the deletion
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred");
       setLoading(false);

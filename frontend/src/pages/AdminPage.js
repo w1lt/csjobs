@@ -21,7 +21,7 @@ import {
 import { useAuth } from "../context/AuthContext";
 import { notifications } from "@mantine/notifications";
 import { useTable, useSortBy } from "react-table";
-import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import { IconArrowDown, IconArrowUp, IconCheck } from "@tabler/icons-react";
 import UsersTable from "../components/UsersTable";
 import { nprogress } from "@mantine/nprogress";
 import Header from "../components/Header";
@@ -114,11 +114,23 @@ const AdminPage = () => {
 
   const handleTriggerScraping = async () => {
     try {
-      await triggerScraping(token);
-      notifications.show({
-        title: "Success",
-        message: "Scraping triggered successfully",
-        color: "green",
+      const id = notifications.show({
+        loading: true,
+        title: "Scraper Begin",
+        message: "Scraping data...",
+        autoClose: false,
+        withCloseButton: false,
+      });
+      const response = await triggerScraping(token);
+      console.log(response);
+      notifications.update({
+        id,
+        color: "teal",
+        title: "Data successfully scraped",
+        message: "Data was successfully scraped",
+        icon: <IconCheck width={18} />,
+        loading: false,
+        autoClose: 2000,
       });
     } catch (error) {
       notifications.show({

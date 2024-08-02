@@ -16,9 +16,9 @@ import {
   IconExclamationCircle,
   IconSquareArrowUp,
   IconRestore,
-  IconUpload,
   IconAlertTriangleFilled,
   IconEdit,
+  IconTrash,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
@@ -28,6 +28,7 @@ import { useAuth } from "../context/AuthContext";
 import { notifications } from "@mantine/notifications";
 import Header from "../components/Header"; // Import Header component
 import { modals } from "@mantine/modals";
+import { deleteListing } from "../api/admin";
 
 const Homepage = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -48,6 +49,29 @@ const Homepage = () => {
       modal: "editListing",
       innerProps: { listingId },
     });
+  };
+
+  const handleDelete = async (listingId) => {
+    try {
+      setLoading(true);
+      const id = notifications.show({
+        title: "Deleting listing...",
+        message: "Please wait...",
+        loading: true,
+        autoClose: false,
+        withCloseButton: false,
+      });
+      await deleteListing(listingId, token);
+      notifications.update(id, {
+        title: "Listing deleted",
+        message: "The listing has been successfully deleted.",
+        color: "blue",
+      });
+      setLoading(false);
+    } catch (err) {
+      console.error("Error deleting listing:", err);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -117,14 +141,6 @@ const Homepage = () => {
       const listing = listings.find((listing) => listing.id === listingId);
       window.open(listing.link, "_blank");
     }
-  };
-
-  const shareListing = (link) => {
-    navigator.clipboard.writeText(link);
-    notifications.show({
-      title: "Link copied",
-      message: `The link has been copied to your clipboard!`,
-    });
   };
 
   const handleChangeStatus = async (listingId, status) => {
@@ -237,12 +253,7 @@ const Homepage = () => {
             >
               View Application
             </Menu.Item>
-            <Menu.Item
-              leftSection={<IconUpload size={18} />}
-              onClick={() => shareListing(row.original.link)}
-            >
-              Share Listing
-            </Menu.Item>
+
             <Menu.Divider />
             <Menu.Item
               leftSection={<IconAlertTriangleFilled size={18} />}
@@ -253,12 +264,14 @@ const Homepage = () => {
               Report Listing
             </Menu.Item>
             {user?.isAdmin && (
-              <Menu.Item
-                leftSection={<IconEdit size={18} />}
-                onClick={() => openEditModal(listingId)}
-              >
-                Edit Listing
-              </Menu.Item>
+              <>
+                <Menu.Item
+                  leftSection={<IconEdit size={18} />}
+                  onClick={() => openEditModal(listingId)}
+                >
+                  Edit Listing
+                </Menu.Item>
+              </>
             )}
           </Menu.Dropdown>
         </Menu>
@@ -300,12 +313,23 @@ const Homepage = () => {
               Report Listing
             </Menu.Item>
             {user?.isAdmin && (
-              <Menu.Item
-                leftSection={<IconEdit size={18} />}
-                onClick={() => openEditModal(listingId)}
-              >
-                Edit Listing
-              </Menu.Item>
+              <>
+                <Menu.Divider />
+                <Menu.Label>Admin</Menu.Label>
+                <Menu.Item
+                  leftSection={<IconEdit size={18} />}
+                  onClick={() => openEditModal(listingId)}
+                >
+                  Edit Listing
+                </Menu.Item>
+                <Menu.Item
+                  leftSection={<IconTrash size={18} />}
+                  onClick={() => handleDelete(listingId)}
+                  c={"red"}
+                >
+                  Delete Listing
+                </Menu.Item>
+              </>
             )}
           </Menu.Dropdown>
         </Menu>

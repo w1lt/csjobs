@@ -62,11 +62,16 @@ const fetchUsers = async (req, res) => {
 
 const scrapeAndAddListings = async (req, res) => {
   try {
-    const { data } = await axios.get(
-      "https://raw.githubusercontent.com/SimplifyJobs/Summer2025-Internships/dev/.github/scripts/listings.json"
-    );
+    const [simplifyData, ouckahData] = await Promise.all([
+      axios.get(
+        "https://raw.githubusercontent.com/SimplifyJobs/Summer2025-Internships/dev/.github/scripts/listings.json"
+      ),
+      axios.get(
+        "https://raw.githubusercontent.com/Ouckah/Summer2025-Internships/dev/.github/scripts/listings.json"
+      ),
+    ]);
 
-    const listings = data
+    const simplifyListings = simplifyData.data
       .filter((item) => !item.url.includes("simplify.jobs")) // Exclude listings with simplify.jobs links
       .sort((a, b) => b.date_posted - a.date_posted) // Sort by date_posted, most recent first
       .slice(0, 30) // Get the first 30 listings
@@ -76,8 +81,23 @@ const scrapeAndAddListings = async (req, res) => {
         location: item.locations,
         date: new Date(item.date_posted * 1000), // Convert timestamp to date
         link: item.url.split("?")[0], // Remove query parameters from URL
-        tags: item.terms,
+        tags: [],
       }));
+
+    const ouckahListings = ouckahData.data
+      .filter((item) => item.season === "Summer") // Filter for summer listings
+      .sort((a, b) => b.date_posted - a.date_posted) // Sort by date_posted, most recent first
+      .slice(0, 30) // Get the first 30 listings
+      .map((item) => ({
+        title: item.title,
+        company: item.company_name,
+        location: item.locations,
+        date: new Date(item.date_posted * 1000), // Convert timestamp to date
+        link: item.url.split("?")[0], // Remove query parameters from URL
+        tags: [],
+      }));
+
+    const listings = [...simplifyListings, ...ouckahListings];
 
     const createdListings = await Promise.all(
       listings.map(async (listing) => {

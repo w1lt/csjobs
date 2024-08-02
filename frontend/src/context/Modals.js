@@ -6,6 +6,7 @@ import accountModal from "../components/AccountModal"; // Adjust the path as nee
 import ReportListingModal from "../components/ReportListingModal";
 import ConfirmApplyModal from "../components/ConfirmApplyModal";
 import EditListingModal from "../components/EditListingModal";
+import HelpModal from "../components/HelpModal";
 
 export const MyModalsProvider = ({ children }) => {
   return (
@@ -16,6 +17,7 @@ export const MyModalsProvider = ({ children }) => {
         reportListing: ReportListingModal,
         confirmApply: ConfirmApplyModal,
         editListing: EditListingModal,
+        help: HelpModal,
       }}
     >
       {children}

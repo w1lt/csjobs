@@ -18,6 +18,14 @@ const Header = () => {
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const navigate = useNavigate();
 
+  const openHelpModal = () => {
+    modals.openContextModal({
+      size: "sm",
+      modal: "help",
+      title: "Help Center",
+    });
+  };
+
   const openAuthModal = () => {
     modals.openContextModal({
       size: "sm",
@@ -94,7 +102,10 @@ const Header = () => {
               </>
             )}
             <Menu.Divider />
-            <Menu.Item leftSection={<IconHelp size={18} />}>
+            <Menu.Item
+              leftSection={<IconHelp size={18} />}
+              onClick={openHelpModal}
+            >
               Help Center
             </Menu.Item>
             <Menu.Item
