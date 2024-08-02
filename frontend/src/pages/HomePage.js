@@ -19,6 +19,7 @@ import {
   IconUpload,
   IconAlertTriangleFilled,
   IconEdit,
+  IconDotsVertical,
 } from "@tabler/icons-react";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
@@ -39,7 +40,7 @@ const Homepage = () => {
   const [selectedFilter] = useState("");
   const [loadingListingId, setLoadingListingId] = useState(null);
 
-  const { token, appliedJobs, setAppliedJobs, setLoading } = useAuth();
+  const { token, appliedJobs, setAppliedJobs, setLoading, user } = useAuth();
   const [listings, setListings] = useState([]);
 
   const openEditModal = (listingId) => {
@@ -252,26 +253,64 @@ const Homepage = () => {
             >
               Report Listing
             </Menu.Item>
-            <Menu.Item
-              leftSection={<IconEdit size={18} />}
-              onClick={() => openEditModal(listingId)}
-            >
-              Edit Listing
-            </Menu.Item>
+            {user?.isAdmin && (
+              <Menu.Item
+                leftSection={<IconEdit size={18} />}
+                onClick={() => openEditModal(listingId)}
+              >
+                Edit Listing
+              </Menu.Item>
+            )}
           </Menu.Dropdown>
         </Menu>
       );
     } else {
       return (
-        <Button
-          color={buttonColor}
-          size="xs"
-          onClick={() => handleApplyClick(listingId, row.original.title)}
-          fullWidth
-          loading={loadingListingId === listingId}
+        <Menu
+          position="right"
+          withArrow
+          trigger="hover"
+          openDelay={25}
+          closeDelay={100}
         >
-          Apply
-        </Button>
+          <Menu.Target>
+            <Button
+              color={buttonColor}
+              size="xs"
+              fullWidth
+              loading={loadingListingId === listingId}
+              rightSection={<IconDotsVertical size={18} />}
+              onClick={() => handleApplyClick(listingId, row.original.title)}
+            >
+              Apply
+            </Button>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Label>Actions</Menu.Label>
+            <Menu.Item
+              leftSection={<IconSquareArrowUp size={18} />}
+              onClick={() => window.open(row.original.link, "_blank")}
+            >
+              Open Application
+            </Menu.Item>
+            <Menu.Item
+              leftSection={<IconAlertTriangleFilled size={18} />}
+              onClick={() =>
+                openReportListingModal(listingId, row.original.title)
+              }
+            >
+              Report Listing
+            </Menu.Item>
+            {user?.isAdmin && (
+              <Menu.Item
+                leftSection={<IconEdit size={18} />}
+                onClick={() => openEditModal(listingId)}
+              >
+                Edit Listing
+              </Menu.Item>
+            )}
+          </Menu.Dropdown>
+        </Menu>
       );
     }
   };

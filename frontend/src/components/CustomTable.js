@@ -9,6 +9,7 @@ import {
   Box,
   RangeSlider,
   InputLabel,
+  Tooltip,
 } from "@mantine/core";
 import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
 
@@ -61,7 +62,10 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
         Array.isArray(listing.compensation) &&
         listing.compensation.length > 0
       ) {
-        pay = listing.compensation;
+        pay =
+          listing.compensation.length === 1
+            ? [listing.compensation[0], listing.compensation[0]]
+            : listing.compensation;
       } else if (typeof listing.compensation === "number") {
         pay = [listing.compensation, listing.compensation];
       }
@@ -132,7 +136,16 @@ const CustomTable = ({ columns, data, appliedJobs }) => {
 
   const renderLocation = (location) => {
     if (Array.isArray(location)) {
-      return location.join(", ");
+      const firstLocation = location[0];
+      const allLocations = location.join(", ");
+      return (
+        <Tooltip label={allLocations} multiline>
+          <span>
+            {firstLocation}
+            {location.length > 1 && ` + ${location.length - 1} more`}
+          </span>
+        </Tooltip>
+      );
     }
     return location;
   };

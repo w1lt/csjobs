@@ -1,15 +1,5 @@
 import React from "react";
-import {
-  Flex,
-  Text,
-  Box,
-  Menu,
-  Button,
-  Group,
-  Divider,
-  Space,
-  darken,
-} from "@mantine/core";
+import { Flex, Text, Box, Menu, Button, Group } from "@mantine/core";
 import {
   IconUserCheck,
   IconUserX,
@@ -22,13 +12,11 @@ import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { modals } from "@mantine/modals";
-import { useMantineTheme } from "@mantine/core";
 
 const Header = () => {
   const { token, logout, user } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const navigate = useNavigate();
-  const theme = useMantineTheme();
 
   const openAuthModal = () => {
     modals.openContextModal({
