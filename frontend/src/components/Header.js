@@ -51,7 +51,7 @@ const Header = () => {
     setPage(value);
     switch (value) {
       case "home":
-        navigate("/");
+        navigate("/listings");
         break;
       case "admin":
         navigate("/admin");
@@ -60,7 +60,7 @@ const Header = () => {
         navigate("/account");
         break;
       default:
-        navigate("/");
+        navigate("/listings");
     }
   };
 
