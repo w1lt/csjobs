@@ -1,5 +1,4 @@
-// controllers/authController.js
-const { User } = require("../models");
+const { User, Resume } = require("../models");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { validateToken } = require("../utils/tokenUtils");
@@ -21,6 +20,7 @@ const registerUser = async (req, res) => {
     const userInfo = {
       id: user.id,
       username: user.username,
+      resume: user.resume, // Include resume information
     };
 
     res.status(201).json({
@@ -36,13 +36,17 @@ const registerUser = async (req, res) => {
 const authUser = async (req, res) => {
   const { username, password } = req.body;
 
-  const user = await User.findOne({ where: { username } });
+  const user = await User.findOne({
+    where: { username },
+    include: { model: Resume, as: "resume" }, // Include the Resume model
+  });
 
   if (user && (await user.matchPassword(password))) {
     const userInfo = {
       id: user.id,
       username: user.username,
       isAdmin: user.isAdmin,
+      resume: user.resume, // Include resume information
     };
 
     res.json({
@@ -58,7 +62,16 @@ const validateUserToken = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const result = await validateToken(token);
   if (result.valid) {
-    res.json(result.user);
+    const user = await User.findByPk(result.user.id, {
+      include: { model: Resume, as: "resume" }, // Include the Resume model
+    });
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      isAdmin: user.isAdmin,
+      resume: user.resume, // Include resume information
+    });
   } else {
     res.status(401).json({ message: result.message });
   }

@@ -1,10 +1,9 @@
 import React from "react";
-import { Container, Text, Space, Anchor } from "@mantine/core";
+import { Container, Text, Anchor } from "@mantine/core";
 
 const Footer = () => {
   return (
-    <Container size="md">
-      <Space h="xl" />
+    <Container size="md" py={20}>
       <Text align="center" size="sm">
         &copy; {new Date().getFullYear()} csjobs.lol{" - "}
         <Anchor
@@ -16,7 +15,6 @@ const Footer = () => {
           Server Status
         </Anchor>
       </Text>
-      <Space h="md" />
     </Container>
   );
 };

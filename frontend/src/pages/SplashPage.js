@@ -3,15 +3,16 @@ import { Container, Box, Text, Button, useMantineTheme } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
 
-const reviews = [
-  "I found my dream internship through csjobs.lol! The platform is amazing.",
-  "The job listings are always up-to-date and relevant. Highly recommended.",
-  "Thanks to csjobs.lol, I landed an internship at a top company!",
-  "csjobs.lol has the best listings for internships and jobs. Absolutely love it!",
-  "The user interface is so clean and easy to use. Found my internship in no time!",
+// Example company logos
+const companyLogos = [
+  "https://www.svgrepo.com/show/303183/google-2015-logo.svg",
+  "https://www.svgrepo.com/show/508761/apple.svg",
+  "https://www.svgrepo.com/show/424916/meta-logo-facebook.svg",
+  "https://www.svgrepo.com/show/303143/microsoft-logo.svg",
+  "https://www.svgrepo.com/show/303630/nvidia-logo.svg",
 ];
 
-const duplicatedReviews = [...reviews, ...reviews];
+const duplicatedLogos = [...companyLogos, ...companyLogos];
 
 const SplashPage = () => {
   const theme = useMantineTheme();
@@ -23,8 +24,8 @@ const SplashPage = () => {
     containerControls
       .start({
         opacity: 0,
-        scale: 0.8,
-        transition: { duration: 0.5 },
+        scale: 0.1,
+        transition: { duration: 0.25 },
       })
       .then(() => {
         navigate("/listings"); // Adjust this to the actual route for your homepage
@@ -33,7 +34,7 @@ const SplashPage = () => {
 
   React.useEffect(() => {
     controls.start({
-      x: [0, -300 * reviews.length],
+      x: [0, -200 * companyLogos.length],
       transition: {
         x: {
           repeat: Infinity,
@@ -82,15 +83,41 @@ const SplashPage = () => {
             overflow: hidden;
             white-space: nowrap;
           }
-          .review {
+          .logo {
             flex: 0 0 auto;
             margin: 0 1rem;
             padding: 1rem;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 8px;
             backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 150px;
+            text-align: center;
+          }
+          .logo img {
+            max-width: 100%;
+            max-height: 50px;
+            filter: grayscale(100%) brightness(0) invert(1); /* Change logos to white */
+            opacity: 0.7;
+          }
+          .logo img:hover {
+            opacity: 1;
+          }
+          .button-container {
+            position: relative;
+            overflow: hidden;
             display: inline-block;
-            min-width: 300px;
+          }
+          .swipe-effect {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            pointer-events: none;
           }
         `}
       </style>
@@ -103,7 +130,7 @@ const SplashPage = () => {
         transition={{ duration: 0.8 }}
       >
         <Text
-          size="xl"
+          size={"2rem"}
           weight={700}
           style={{ marginBottom: theme.spacing.md }}
           component={motion.h1}
@@ -124,7 +151,11 @@ const SplashPage = () => {
           Your one-stop platform for securing the best internships and job
           opportunities.
         </Text>
-        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+        <motion.div
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="button-container"
+        >
           <Button
             size="lg"
             radius="xl"
@@ -132,7 +163,13 @@ const SplashPage = () => {
             style={{ backgroundColor: theme.colors.teal[6] }}
             onClick={handleGetStarted}
           >
-            Start Applying for Free!
+            <motion.div
+              className="swipe-effect"
+              initial={{ left: "-100%" }}
+              whileHover={{ left: "100%" }}
+              transition={{ duration: 0.5 }}
+            />
+            Start Applying, it's Free!
           </Button>
         </motion.div>
       </Container>
@@ -150,7 +187,7 @@ const SplashPage = () => {
         transition={{ delay: 1, duration: 1 }}
       >
         <Text size="lg" weight={500} style={{ marginBottom: theme.spacing.md }}>
-          Trusted by students and professionals alike
+          Trusted by top companies worldwide
         </Text>
         <Box style={{ overflow: "hidden", width: "100%" }}>
           <motion.div
@@ -158,9 +195,9 @@ const SplashPage = () => {
             animate={controls}
             style={{ display: "flex", width: "fit-content" }}
           >
-            {duplicatedReviews.map((review, index) => (
-              <Box key={index} className="review">
-                <Text size="md">{review}</Text>
+            {duplicatedLogos.map((logo, index) => (
+              <Box key={index} className="logo">
+                <img src={logo} alt={`Company ${index + 1}`} />
               </Box>
             ))}
           </motion.div>

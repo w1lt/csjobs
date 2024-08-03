@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { notifications } from "@mantine/notifications";
 import { useNavigate } from "react-router-dom";
-import { registerUser, loginUser } from "../api";
+import { registerUser, loginUser, validateUserToken } from "../api";
 import { nprogress } from "@mantine/nprogress";
 
 const AuthContext = createContext();
@@ -74,15 +74,26 @@ export const AuthProvider = ({ children }) => {
   }, [loading]);
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedUser = localStorage.getItem("user");
+    const fetchUser = async () => {
+      const savedToken = localStorage.getItem("token");
+      const savedUser = localStorage.getItem("user");
 
-    if (savedToken && savedUser) {
-      setToken(savedToken);
-      setUser(JSON.parse(savedUser));
-    } else {
-      setLoading(false);
-    }
+      if (savedToken && savedUser) {
+        setToken(savedToken);
+        setUser(JSON.parse(savedUser));
+
+        try {
+          const response = await validateUserToken(savedToken);
+          setUser(response);
+        } catch {
+          logout();
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
   return (
@@ -97,6 +108,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         loading,
         setLoading,
+        setUser,
       }}
     >
       {children}

@@ -1,16 +1,17 @@
 import React from "react";
 import { useTable, useSortBy, useGlobalFilter } from "react-table";
-import { Table } from "@mantine/core";
+import { Skeleton, Table, Text } from "@mantine/core";
 import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
+import { useAuth } from "../context/AuthContext";
 
 const CustomTable = ({ columns, data }) => {
+  const { loading } = useAuth();
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable(
       {
         columns,
         data,
       },
-
       useGlobalFilter,
       useSortBy
     );
@@ -66,31 +67,52 @@ const CustomTable = ({ columns, data }) => {
           })}
         </Table.Thead>
         <Table.Tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row);
-            const { key, ...restRowProps } = row.getRowProps();
-            return (
-              <Table.Tr key={row.id} {...restRowProps}>
-                {row.cells.map((cell) => {
-                  const { key, ...restCellProps } = cell.getCellProps();
-                  return (
-                    <Table.Td
-                      key={cell.column.id}
-                      {...restCellProps}
-                      style={{
-                        padding: "4px 8px",
-                        textAlign: "left",
-                        whiteSpace: "normal",
-                        wordBreak: "break-word",
-                      }}
-                    >
-                      {cell.render("Cell")}
-                    </Table.Td>
-                  );
-                })}
+          {loading && rows.length === 0 ? (
+            Array.from({ length: 8 }).map((_, index) => (
+              <Table.Tr key={`skeleton-${index}`}>
+                {columns.map((column) => (
+                  <Table.Td key={`skeleton-cell-${column.accessor}-${index}`}>
+                    <Skeleton height={20} />
+                  </Table.Td>
+                ))}
               </Table.Tr>
-            );
-          })}
+            ))
+          ) : rows.length === 0 ? (
+            <Table.Tr>
+              <Table.Td
+                colSpan={columns.length}
+                style={{ textAlign: "center", padding: "16px" }}
+              >
+                <Text>No results found. Try changing filters.</Text>
+              </Table.Td>
+            </Table.Tr>
+          ) : (
+            rows.map((row) => {
+              prepareRow(row);
+              const { key, ...restRowProps } = row.getRowProps();
+              return (
+                <Table.Tr key={row.id} {...restRowProps}>
+                  {row.cells.map((cell) => {
+                    const { key, ...restCellProps } = cell.getCellProps();
+                    return (
+                      <Table.Td
+                        key={cell.column.id}
+                        {...restCellProps}
+                        style={{
+                          padding: "4px 8px",
+                          textAlign: "left",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
+                        }}
+                      >
+                        {cell.render("Cell")}
+                      </Table.Td>
+                    );
+                  })}
+                </Table.Tr>
+              );
+            })
+          )}
         </Table.Tbody>
       </Table>
     </div>

@@ -8,6 +8,7 @@ const listingRoutes = require("./routes/listings");
 const applicationRoutes = require("./routes/applications");
 const adminRoutes = require("./routes/admin");
 const reportRoutes = require("./routes/report");
+const fileRoutes = require("./routes/file");
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ const startServer = async () => {
     app.use("/listings", listingRoutes);
     app.use("/applications", applicationRoutes);
     app.use("/reports", reportRoutes);
+    app.use("/file", fileRoutes);
 
     // Start the server
     const PORT = process.env.PORT || 5000;

@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from "react";
-import { getListings, getApplications } from "../api/index";
+import { useState, useEffect, useMemo } from "react";
+import { getListings, getApplications } from "../api";
 import { useAuth } from "../context/AuthContext";
 import convertToDate from "../utils/convertToDate";
 
@@ -7,7 +7,7 @@ const useMultiSelect = (initialSelected = []) => {
   const [selectedItems, setSelectedItems] = useState(initialSelected);
 
   const handleSelect = (value) => {
-    if (!selectedItems.includes(value)) {
+    if (value && !selectedItems.includes(value)) {
       setSelectedItems((prev) => [...prev, value]);
     }
   };
@@ -16,19 +16,37 @@ const useMultiSelect = (initialSelected = []) => {
     setSelectedItems((prev) => prev.filter((item) => item !== value));
   };
 
-  return [selectedItems, handleSelect, removeSelectedItem];
+  const clearSelectedItems = () => {
+    setSelectedItems([]);
+  };
+
+  return [selectedItems, handleSelect, removeSelectedItem, clearSelectedItems];
 };
 
-const useFilteredData = (showApplied) => {
+const useListingsData = (showApplied) => {
   const { token, appliedJobs, setAppliedJobs, setLoading } = useAuth();
   const [listings, setListings] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [minPay, setMinPay] = useState("0");
+  const [minPay, setMinPay] = useState(0);
 
-  const [selectedFilter, handleJobTypeSelect, removeSelectedJobType] =
-    useMultiSelect([]);
-  const [locationFilter, handleLocationSelect, removeSelectedLocation] =
-    useMultiSelect([]);
+  const [
+    selectedFilter,
+    handleJobTypeSelect,
+    removeSelectedJobType,
+    clearSelectedJobTypes,
+  ] = useMultiSelect([]);
+  const [
+    locationFilter,
+    handleLocationSelect,
+    removeSelectedLocation,
+    clearSelectedLocations,
+  ] = useMultiSelect([]);
+  const [
+    statusFilter,
+    handleStatusSelect,
+    removeSelectedStatus,
+    clearSelectedStatuses,
+  ] = useMultiSelect([]);
 
   useEffect(() => {
     const fetchListings = async () => {
@@ -146,6 +164,12 @@ const useFilteredData = (showApplied) => {
           return false;
         }
 
+        if (statusFilter.length > 0 && appliedJobs[listing.id]) {
+          if (!statusFilter.includes(appliedJobs[listing.id].status)) {
+            return false;
+          }
+        }
+
         if (showApplied && !appliedJobs[listing.id]) {
           return false;
         } else if (!showApplied && appliedJobs[listing.id]) {
@@ -166,6 +190,7 @@ const useFilteredData = (showApplied) => {
     listings,
     selectedFilter,
     locationFilter,
+    statusFilter,
     showApplied,
     appliedJobs,
     minPay,
@@ -182,11 +207,22 @@ const useFilteredData = (showApplied) => {
     setSelectedFilter: handleJobTypeSelect,
     locationFilter,
     setLocationFilter: handleLocationSelect,
+    statusFilter,
+    setStatusFilter: handleStatusSelect,
     removeSelectedJobType,
     removeSelectedLocation,
+    removeSelectedStatus,
     minPay,
     setMinPay,
+    clearFilters: () => {
+      setGlobalFilter("");
+      clearSelectedJobTypes();
+      clearSelectedLocations();
+      clearSelectedStatuses();
+      setMinPay(0);
+    },
+    setListings, // Add setListings here
   };
 };
 
-export default useFilteredData;
+export default useListingsData;

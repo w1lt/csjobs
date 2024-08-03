@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, Menu } from "@mantine/core";
 import {
   IconLoader,
@@ -25,9 +25,10 @@ const ListingActionMenu = ({
   openReportListingModal,
   shareListing,
   setConfettiVisible,
+  setLoadingListingId,
+  loadingListingId, // Add loadingListingId to props
 }) => {
   const { token, appliedJobs, setAppliedJobs, setLoading, user } = useAuth();
-  const [loadingListingId, setLoadingListingId] = useState(null);
 
   const handleChangeStatus = async (listingId, status) => {
     try {
@@ -48,6 +49,7 @@ const ListingActionMenu = ({
       setAppliedJobs(updatedAppliedJobs);
     } catch (error) {
       console.error("Error updating application status:", error);
+      setLoadingListingId(null); // Ensure to reset loadingListingId in case of error
     }
   };
 
@@ -62,6 +64,7 @@ const ListingActionMenu = ({
       setAppliedJobs(rest);
     } catch (error) {
       console.error("Error removing application status:", error);
+      setLoadingListingId(null); // Ensure to reset loadingListingId in case of error
     }
   };
 

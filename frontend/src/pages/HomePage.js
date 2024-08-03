@@ -17,7 +17,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
 import Header from "../components/Header";
 import { modals } from "@mantine/modals";
-import useFilteredData from "../hooks/useFilteredData";
+import useListingsData from "../hooks/useListingsData";
 import formatDate from "../utils/formatDate";
 import ListingActionMenu from "../components/ListingActionMenu";
 import { notifications } from "@mantine/notifications";
@@ -26,8 +26,6 @@ import {
   IconSearch,
   IconMapPin,
   IconCurrencyDollar,
-  IconList,
-  IconCheck,
   IconBriefcase2,
   IconChevronDown,
   IconChevronUp,
@@ -41,9 +39,8 @@ const Homepage = () => {
     height: window.innerHeight,
   };
   const [setLoadingListingId] = useState(null);
-  const [setListings] = useState([]);
-  const [showApplied, setShowApplied] = useState(false);
-  const [minPayPopoverOpened] = useState(false);
+  const [showApplied] = useState(false);
+  const [minPayPopoverOpened, setMinPayPopoverOpened] = useState(false);
 
   const {
     filteredData,
@@ -59,7 +56,8 @@ const Homepage = () => {
     removeSelectedLocation,
     minPay,
     setMinPay,
-  } = useFilteredData(showApplied);
+    clearFilters,
+  } = useListingsData(showApplied);
 
   const openEditModal = (listingId) => {
     modals.openContextModal({
@@ -105,7 +103,7 @@ const Homepage = () => {
         <ListingActionMenu
           listingId={row.original.id}
           row={row}
-          setListings={setListings}
+          setListings={() => {}}
           setLoadingListingId={setLoadingListingId}
           openEditModal={openEditModal}
           openReportListingModal={openReportListingModal}
@@ -134,10 +132,7 @@ const Homepage = () => {
   return (
     <Container size="md">
       <Header />
-      <Text align="center" size="xl" weight={700} mt="lg" mb="sm">
-        Internship Listings
-      </Text>
-      <Text align="center" size="lg" mb="sm" c="dimmed">
+      <Text align="center" size="lg" mb="md" c="dimmed">
         Browse, apply, and secure your dream internship. New listings added
         daily.
       </Text>
@@ -177,7 +172,14 @@ const Homepage = () => {
           onInputChange={null}
           icon={IconMapPin}
         />
-        <Popover position="bottom-end" withArrow width={"300"}>
+        <Popover
+          position="bottom-end"
+          withArrow
+          width={"300"}
+          opened={minPayPopoverOpened}
+          onClose={() => setMinPayPopoverOpened(false)}
+          onOpen={() => setMinPayPopoverOpened(true)}
+        >
           <Popover.Target>
             <Button
               variant={minPayFilterApplied ? "filled" : "light"}
@@ -189,6 +191,7 @@ const Homepage = () => {
                   <IconChevronDown size={18} />
                 )
               }
+              onClick={() => setMinPayPopoverOpened((o) => !o)}
             >
               Min. Pay
             </Button>
@@ -215,15 +218,19 @@ const Homepage = () => {
             </Box>
           </Popover.Dropdown>
         </Popover>
-        <Button
-          leftSection={
-            showApplied ? <IconCheck size={18} /> : <IconList size={18} />
+        <Text
+          align="center"
+          size="sm"
+          opacity={
+            jobTypeFilterApplied || locationFilterApplied || minPayFilterApplied
+              ? 1
+              : 0
           }
-          onClick={(event) => setShowApplied(!showApplied)}
-          variant={showApplied ? "filled" : "light"}
+          style={{ cursor: "pointer" }}
+          onClick={clearFilters}
         >
-          {showApplied ? "Applied Listings" : "All Listings"}
-        </Button>
+          Clear filters
+        </Text>
       </Group>
       <Paper shadow="md" py="sm" withBorder>
         <Container>

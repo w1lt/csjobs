@@ -49,3 +49,29 @@ export const reportListing = async (reportData, token) => {
   });
   return response.data;
 };
+
+export const uploadResume = async (formData, token) => {
+  const response = await axios.post(`${API_URL}/file/upload`, formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
+
+export const downloadResume = async (fileId) => {
+  const response = await axios.get(`${API_URL}/file/download/${fileId}`, {
+    responseType: "blob",
+  });
+  return response.data;
+};
+
+export const generateCoverLetter = async (fileId, jobTitle, companyName) => {
+  const response = await axios.post(`${API_URL}/cover-letter`, {
+    fileId,
+    jobTitle,
+    companyName,
+  });
+  return response.data;
+};

@@ -16,6 +16,9 @@ import {
   IconHelp,
   IconSun,
   IconMoon,
+  IconLayout,
+  IconChecklist,
+  IconSparkles,
 } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useAuth } from "../context/AuthContext";
@@ -23,46 +26,26 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { modals } from "@mantine/modals";
 
 const Header = () => {
-  const { token, logout, user } = useAuth();
+  const { token, logout, user, setLoading } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useMantineTheme();
 
-  const [page, setPage] = useState("");
-
-  useEffect(() => {
-    switch (location.pathname) {
-      case "/":
-        setPage("home");
-        break;
-      case "/admin":
-        setPage("admin");
-        break;
-      case "/account":
-        setPage("account");
-        break;
-      default:
-        setPage("");
-    }
-  }, [location.pathname]);
+  const [segmentedValue, setSegmentedValue] = useState(location.pathname);
 
   const handleSegmentChange = (value) => {
-    setPage(value);
-    switch (value) {
-      case "home":
-        navigate("/listings");
-        break;
-      case "admin":
-        navigate("/admin");
-        break;
-      case "account":
-        navigate("/account");
-        break;
-      default:
-        navigate("/listings");
-    }
+    setSegmentedValue(value);
+    setLoading(false);
+    setLoading(true);
+    setTimeout(() => {
+      navigate(value);
+    }, 150);
   };
+
+  useEffect(() => {
+    setSegmentedValue(location.pathname);
+  }, [location.pathname]);
 
   const openHelpModal = () => {
     modals.openContextModal({
@@ -115,12 +98,37 @@ const Header = () => {
           csjobs
         </Text>
         <SegmentedControl
-          value={page}
+          transitionDuration={100}
+          value={segmentedValue}
           onChange={handleSegmentChange}
           data={[
-            { label: "Find Jobs", value: "home" },
-            { label: "My Applications", value: "admin" },
-            { label: "Admin", value: "admin" },
+            {
+              value: "/listings",
+              label: (
+                <Flex gap={5} align={"center"}>
+                  <IconLayout size={18} />
+                  Find Jobs
+                </Flex>
+              ),
+            },
+            {
+              value: "/applications",
+              label: (
+                <Flex gap={5} align={"center"}>
+                  <IconChecklist size={18} />
+                  My Applications
+                </Flex>
+              ),
+            },
+            {
+              value: "/cover-letter",
+              label: (
+                <Flex gap={5} align={"center"}>
+                  <IconSparkles size={18} />
+                  Cover Letter
+                </Flex>
+              ),
+            },
           ]}
         />
 
@@ -145,7 +153,7 @@ const Header = () => {
               <>
                 <Menu.Label>Account</Menu.Label>
                 <Menu.Item onClick={openAccountModal}>My Account</Menu.Item>
-                {user.isAdmin && (
+                {user?.isAdmin && (
                   <Menu.Item onClick={() => navigate("/admin")}>
                     Admin Page
                   </Menu.Item>
