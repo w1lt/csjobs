@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Container,
-  Space,
   Paper,
   Text,
   Flex,
@@ -13,13 +12,13 @@ import {
 import CustomTable from "../components/CustomTable";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
-import Header from "../components/Header"; // Import Header component
+import Header from "../components/Header";
 import { modals } from "@mantine/modals";
 import useFilteredData from "../hooks/useFilteredData";
-import formatDate from "../utils/formatDate"; // Import the new formatDate function
-import ListingActionMenu from "../components/ListingActionMenu"; // Import the new ListingActionMenu component
+import formatDate from "../utils/formatDate";
+import ListingActionMenu from "../components/ListingActionMenu";
 import { notifications } from "@mantine/notifications";
-import FilterPopover from "../components/FilterPopover"; // Import the new FilterPopover component
+import FilterPopover from "../components/FilterPopover";
 import {
   IconSearch,
   IconMapPin,
@@ -129,7 +128,6 @@ const Homepage = () => {
   return (
     <Container size="md">
       <Header />
-      <Space h="xs" />
       <Text align="center" size="lg" mb="sm" c="dimmed">
         Browse, apply, and secure your dream internship. New listings added
         daily.
