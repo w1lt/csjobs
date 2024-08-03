@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, TextInput, Box, Text, Modal, Divider } from "@mantine/core";
+import { Button, TextInput, Box, Text, Divider } from "@mantine/core";
 import { useAuth } from "../context/AuthContext";
 
 const AccountModal = ({ opened, onClose }) => {
@@ -28,23 +28,19 @@ const AccountModal = ({ opened, onClose }) => {
 
         {/* Application Information */}
         <Box mb="xs">
-          <Text size="md" weight={500} mb="xs" >
+          <Text size="md" weight={500} mb="xs">
             Application Stats
           </Text>
           <Box display="flex" alignItems="center">
-            <Text size="sm" >
-              Total Applications:
-            </Text>
-            <Text size="sm" ml="xs" weight={600} >
+            <Text size="sm">Total Applications:</Text>
+            <Text size="sm" ml="xs" weight={600}>
               {totalApplications}
             </Text>
           </Box>
 
           <Box display="flex" alignItems="center" mt="xs">
-            <Text size="sm" >
-              Pending Applications:
-            </Text>
-            <Text size="sm" ml="xs" weight={600} >
+            <Text size="sm">Pending Applications:</Text>
+            <Text size="sm" ml="xs" weight={600}>
               {pendingApplications}
             </Text>
           </Box>
