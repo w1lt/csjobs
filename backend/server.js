@@ -1,7 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const rateLimit = require("express-rate-limit");
 const { connectDB } = require("./config/db");
 const { syncModels } = require("./models");
 const authRoutes = require("./routes/auth");
@@ -28,9 +27,6 @@ const startServer = async () => {
 
     // Middleware to parse JSON
     app.use(express.json());
-
-    // Apply rate limiting middleware to all requests
-    app.use(limiter);
 
     // Define routes
     app.use("/auth", authRoutes);
