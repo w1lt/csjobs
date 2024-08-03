@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Flex,
   Text,
@@ -7,6 +7,7 @@ import {
   Button,
   Group,
   useMantineTheme,
+  SegmentedControl,
 } from "@mantine/core";
 import {
   IconUserCheck,
@@ -18,14 +19,50 @@ import {
 } from "@tabler/icons-react";
 import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { modals } from "@mantine/modals";
 
 const Header = () => {
   const { token, logout, user } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const navigate = useNavigate();
+  const location = useLocation();
   const theme = useMantineTheme();
+
+  const [page, setPage] = useState("");
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/":
+        setPage("home");
+        break;
+      case "/admin":
+        setPage("admin");
+        break;
+      case "/account":
+        setPage("account");
+        break;
+      default:
+        setPage("");
+    }
+  }, [location.pathname]);
+
+  const handleSegmentChange = (value) => {
+    setPage(value);
+    switch (value) {
+      case "home":
+        navigate("/");
+        break;
+      case "admin":
+        navigate("/admin");
+        break;
+      case "account":
+        navigate("/account");
+        break;
+      default:
+        navigate("/");
+    }
+  };
 
   const openHelpModal = () => {
     modals.openContextModal({
@@ -70,17 +107,23 @@ const Header = () => {
           variant="gradient"
           gradient={{ from: "indigo", to: "red", deg: 149 }}
           style={{
-            position: "absolute",
-            left: "50%",
-            transform: "translateX(-50%)",
             fontSize: "2rem",
             cursor: "pointer",
           }}
           onClick={() => navigate("/")}
         >
-          csjobs.lol
+          csjobs
         </Text>
-        <Box />
+        <SegmentedControl
+          value={page}
+          onChange={handleSegmentChange}
+          data={[
+            { label: "Find Jobs", value: "home" },
+            { label: "My Applications", value: "admin" },
+            { label: "Admin", value: "admin" },
+          ]}
+        />
+
         <Menu
           position="bottom-end"
           withArrow

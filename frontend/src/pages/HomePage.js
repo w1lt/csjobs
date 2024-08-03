@@ -8,6 +8,9 @@ import {
   Box,
   Group,
   Button,
+  Popover,
+  Slider,
+  InputLabel,
 } from "@mantine/core";
 import CustomTable from "../components/CustomTable";
 import { useMediaQuery } from "@mantine/hooks";
@@ -26,6 +29,8 @@ import {
   IconList,
   IconCheck,
   IconBriefcase2,
+  IconChevronDown,
+  IconChevronUp,
 } from "@tabler/icons-react";
 
 const Homepage = () => {
@@ -38,6 +43,7 @@ const Homepage = () => {
   const [setLoadingListingId] = useState(null);
   const [setListings] = useState([]);
   const [showApplied, setShowApplied] = useState(false);
+  const [minPayPopoverOpened] = useState(false);
 
   const {
     filteredData,
@@ -128,6 +134,9 @@ const Homepage = () => {
   return (
     <Container size="md">
       <Header />
+      <Text align="center" size="xl" weight={700} mt="lg" mb="sm">
+        Internship Listings
+      </Text>
       <Text align="center" size="lg" mb="sm" c="dimmed">
         Browse, apply, and secure your dream internship. New listings added
         daily.
@@ -168,19 +177,44 @@ const Homepage = () => {
           onInputChange={null}
           icon={IconMapPin}
         />
-        <FilterPopover
-          label="Min. Pay"
-          placeholder="Minimum Pay"
-          data={[]}
-          value={minPay}
-          onChange={() => {}}
-          applied={minPayFilterApplied}
-          removeSelected={() => {}}
-          inputType="number"
-          inputValue={minPay}
-          onInputChange={(e) => setMinPay(e.target.value)}
-          icon={IconCurrencyDollar}
-        />
+        <Popover position="bottom-end" withArrow width={"300"}>
+          <Popover.Target>
+            <Button
+              variant={minPayFilterApplied ? "filled" : "light"}
+              leftSection={<IconCurrencyDollar size={18} />}
+              rightSection={
+                minPayPopoverOpened ? (
+                  <IconChevronUp size={18} />
+                ) : (
+                  <IconChevronDown size={18} />
+                )
+              }
+            >
+              Min. Pay
+            </Button>
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Box pb={15}>
+              <InputLabel>Minimum Pay</InputLabel>
+              <Slider
+                label={(value) => `$${value} `}
+                value={minPay}
+                onChange={setMinPay}
+                min={0}
+                max={100}
+                step={1}
+                marks={[
+                  { value: 0, label: "$0" },
+                  { value: 20, label: "$20" },
+                  { value: 40, label: "$40" },
+                  { value: 60, label: "$60" },
+                  { value: 80, label: "$80" },
+                  { value: 100, label: "$100" },
+                ]}
+              />
+            </Box>
+          </Popover.Dropdown>
+        </Popover>
         <Button
           leftSection={
             showApplied ? <IconCheck size={18} /> : <IconList size={18} />
