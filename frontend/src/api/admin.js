@@ -99,3 +99,16 @@ export const deleteListing = async (listingId, token) => {
   });
   return response.data;
 };
+
+export const disableListing = async (listingId, token) => {
+  const response = await axios.patch(
+    `${API_URL}/listings/${listingId}/disable`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return response.data;
+};

@@ -1,5 +1,13 @@
 import React from "react";
-import { Flex, Text, Box, Menu, Button, Group } from "@mantine/core";
+import {
+  Flex,
+  Text,
+  Box,
+  Menu,
+  Button,
+  Group,
+  useMantineTheme,
+} from "@mantine/core";
 import {
   IconUserCheck,
   IconUserX,
@@ -17,6 +25,7 @@ const Header = () => {
   const { token, logout, user } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const navigate = useNavigate();
+  const theme = useMantineTheme();
 
   const openHelpModal = () => {
     modals.openContextModal({
@@ -44,11 +53,18 @@ const Header = () => {
   return (
     <Box
       style={{
+        background:
+          theme.colorScheme === "dark"
+            ? "var(--mantine-color-body)"
+            : "var(--mantine-color-body)",
+        position: "sticky",
         top: 0,
-        zIndex: 1000,
+        zIndex: 5,
       }}
+      pb={20}
+      pt={20}
     >
-      <Flex justify="space-between" align="center" mb="xs" mt="md">
+      <Flex justify="space-between" align="center">
         <Text
           align="center"
           variant="gradient"

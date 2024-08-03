@@ -5,6 +5,7 @@ const {
   updateListing,
   getListingDetails,
   deleteListing,
+  disableListing,
 } = require("../controllers/listingController");
 const { protect, admin } = require("../middleware/auth");
 
@@ -15,5 +16,6 @@ router.post("/", protect, admin, createListing);
 router.put("/:id", protect, admin, updateListing);
 router.get("/:id", protect, getListingDetails);
 router.delete("/:id", protect, admin, deleteListing);
+router.patch("/:id/disable", protect, admin, disableListing);
 
 module.exports = router;

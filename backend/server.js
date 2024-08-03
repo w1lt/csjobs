@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
-const cors = require("cors"); // Import the cors middleware
-const rateLimit = require("express-rate-limit"); // Import the express-rate-limit middleware
+const cors = require("cors");
+const rateLimit = require("express-rate-limit");
 const { connectDB } = require("./config/db");
 const { syncModels } = require("./models");
 const authRoutes = require("./routes/auth");

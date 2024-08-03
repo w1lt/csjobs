@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextInput, Box, LoadingOverlay } from "@mantine/core";
+import { Button, TextInput, Box, LoadingOverlay, Switch } from "@mantine/core";
 import { useAuth } from "../context/AuthContext"; // Adjust the path as needed
 import { updateListing, getListingDetails, deleteListing } from "../api/admin"; // Adjust the path as needed
 
@@ -11,6 +11,7 @@ const EditListingModal = ({ context, id, innerProps }) => {
   const [link, setLink] = useState("");
   const [tags, setTags] = useState("");
   const [compensation, setCompensation] = useState("");
+  const [disabled, setDisabled] = useState(false); // New state for disabled
   const [error, setError] = useState("");
   const { loading, setLoading, token } = useAuth();
 
@@ -41,6 +42,7 @@ const EditListingModal = ({ context, id, innerProps }) => {
             ? JSON.stringify(listingDetails.compensation, null, 2)
             : ""
         );
+        setDisabled(listingDetails.disabled || false); // Set disabled state
         setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || "An error occurred");
@@ -65,6 +67,7 @@ const EditListingModal = ({ context, id, innerProps }) => {
           compensation: compensation
             ? JSON.parse(compensation).map((comp) => parseInt(comp, 10))
             : [],
+          disabled, // Include disabled in the update data
         },
         token
       );
@@ -149,6 +152,13 @@ const EditListingModal = ({ context, id, innerProps }) => {
           placeholder="Add compensation as JSON array, e.g. [100, 200]"
           value={compensation}
           onChange={(event) => setCompensation(event.currentTarget.value)}
+        />
+      </Box>
+      <Box mb="xs">
+        <Switch
+          label="Disabled"
+          checked={disabled}
+          onChange={(event) => setDisabled(event.currentTarget.checked)}
         />
       </Box>
       {error && <div style={{ color: "red" }}>{error}</div>}

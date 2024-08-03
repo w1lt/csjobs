@@ -1,3 +1,4 @@
+const { sequelize } = require("../config/db");
 const User = require("./User");
 const Listing = require("./Listing");
 const Application = require("./Application");
@@ -17,10 +18,7 @@ Object.values(models).forEach((model) => {
 });
 
 const syncModels = async () => {
-  await User.sync({ alter: true });
-  await Listing.sync({ alter: true });
-  await Application.sync({ alter: true });
-  await Report.sync({ alter: true });
+  await sequelize.sync({ alter: true });
 };
 
-module.exports = { ...models, syncModels };
+module.exports = { ...models, syncModels, sequelize };
