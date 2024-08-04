@@ -6,6 +6,7 @@ import {
   Button,
   useMantineTheme,
   Center,
+  useComputedColorScheme,
 } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
@@ -35,6 +36,7 @@ const SplashPage = () => {
   const containerControls = useAnimation();
   const { token } = useAuth();
   const [init, setInit] = useState(false);
+  const colorScheme = useComputedColorScheme();
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -137,13 +139,13 @@ const SplashPage = () => {
               },
               particles: {
                 color: {
-                  value: "#ffffff",
+                  value: colorScheme === "dark" ? "#ffffff" : "#000000",
                 },
                 opacity: {
                   value: 0.5,
                 },
                 links: {
-                  color: "#ffffff",
+                  color: colorScheme === "dark" ? "#ffffff" : "#000000",
                   distance: 150,
                   enable: true,
                   opacity: 0.2,
@@ -188,7 +190,14 @@ const SplashPage = () => {
               flex: 0 0 auto;
               margin: 0 1rem;
               padding: 1rem;
-              background: rgba(255, 255, 255, 0.1);
+              background: 
+              ${
+                colorScheme === "dark"
+                  ? "rgba(255, 255, 255, 0.25)"
+                  : "rgba(0, 0, 0, 0.1)"
+              }
+              
+              ;
               border-radius: 8px;
               backdrop-filter: blur(10px);
               display: flex;
@@ -197,10 +206,19 @@ const SplashPage = () => {
               min-width: 150px;
               text-align: center;
             }
+             
+            .logo-img {
+             filter: grayscale(100%) brightness(0) invert(
+                ${colorScheme === "dark" ? 1 : 0}
+              );
+            }
+
             .logo img {
               max-width: 100%;
               max-height: 50px;
-              filter: grayscale(100%) brightness(0) invert(1);
+              filter: grayscale(100%) brightness(0) invert(
+                ${colorScheme === "dark" ? 1 : 0}
+              );
               opacity: 0.7;
             }
             .logo img:hover {
@@ -224,7 +242,7 @@ const SplashPage = () => {
         </style>
         <Container
           size="sm"
-          style={{ textAlign: "center", color: theme.white, zIndex: 1 }}
+          style={{ textAlign: "center", zIndex: 1 }}
           component={motion.div}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -232,6 +250,7 @@ const SplashPage = () => {
         >
           <Center>
             <motion.img
+              className="logo-img"
               initial={{ y: -50 }}
               animate={{ y: 0 }}
               transition={{ type: "spring", stiffness: 100 }}
@@ -285,7 +304,6 @@ const SplashPage = () => {
           size="md"
           style={{
             textAlign: "center",
-            color: theme.white,
             zIndex: 1,
           }}
           mt={10}

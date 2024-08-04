@@ -25,7 +25,7 @@ import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { modals } from "@mantine/modals";
-import { useWindowScroll } from "@mantine/hooks";
+import { useMediaQuery, useWindowScroll } from "@mantine/hooks";
 
 const Header = () => {
   const { token, logout, user, setLoading } = useAuth();
@@ -34,6 +34,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useMantineTheme();
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const [segmentedValue, setSegmentedValue] = useState(location.pathname);
 
@@ -88,16 +89,18 @@ const Header = () => {
       pt={20}
     >
       <Flex justify="space-between" align="center">
-        <Image
-          src="/csjobs.svg"
-          alt="logo"
-          h={50}
-          align="center"
-          onClick={token ? () => scrollTo({ y: 0 }) : () => navigate("/")}
-          style={{
-            cursor: "pointer",
-          }}
-        />
+        {!isMobile && (
+          <Image
+            src="/csjobs.svg"
+            alt="logo"
+            h={50}
+            align="center"
+            onClick={token ? () => scrollTo({ y: 0 }) : () => navigate("/")}
+            style={{
+              cursor: "pointer",
+            }}
+          />
+        )}
         <SegmentedControl
           transitionDuration={100}
           value={segmentedValue}
