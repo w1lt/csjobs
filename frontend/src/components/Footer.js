@@ -14,6 +14,15 @@ const Footer = () => {
         >
           Server Status
         </Anchor>
+        {" - "}
+        <Anchor
+          href="https://www.linkedin.com/company/104124163/"
+          target="
+        _blank 
+        "
+        >
+          Careers
+        </Anchor>
       </Text>
     </Container>
   );

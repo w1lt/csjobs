@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Container, Box, Text, Button, useMantineTheme } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
 
 // Example company logos
 const companyLogos = [
@@ -19,12 +20,12 @@ const SplashPage = () => {
   const navigate = useNavigate();
   const controls = useAnimation();
   const containerControls = useAnimation();
+  const { token } = useAuth();
 
   const handleGetStarted = () => {
     containerControls
       .start({
         opacity: 0,
-        scale: 0.1,
         transition: { duration: 0.25 },
       })
       .then(() => {
@@ -32,7 +33,10 @@ const SplashPage = () => {
       });
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (token) {
+      navigate("/listings"); // Adjust this to the actual route for your homepage
+    }
     controls.start({
       x: [0, -200 * companyLogos.length],
       transition: {
@@ -44,11 +48,11 @@ const SplashPage = () => {
         },
       },
     });
-  }, [controls]);
+  }, [controls, navigate, token]);
 
   return (
     <motion.div
-      initial={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 1 }}
       animate={containerControls}
       style={{
         position: "relative",
@@ -130,26 +134,25 @@ const SplashPage = () => {
         transition={{ duration: 0.8 }}
       >
         <Text
-          size={"2rem"}
-          weight={700}
+          size={"1.5rem"}
           style={{ marginBottom: theme.spacing.md }}
           component={motion.h1}
           initial={{ y: -50 }}
           animate={{ y: 0 }}
           transition={{ type: "spring", stiffness: 100 }}
         >
-          Welcome to csjobs.lol
+          csjobs.lol
         </Text>
         <Text
-          size="lg"
+          size="2rem"
+          weight={700}
           style={{ marginBottom: theme.spacing.md }}
           component={motion.p}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
         >
-          Your one-stop platform for securing the best internships and job
-          opportunities.
+          The one-stop platform for securing your dream internship.
         </Text>
         <motion.div
           whileHover={{ scale: 1.1 }}

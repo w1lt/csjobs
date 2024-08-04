@@ -114,8 +114,12 @@ const useListingsData = (showApplied) => {
     return location;
   };
 
+  const containsText = (text, searchText) => {
+    return text.toString().toLowerCase().includes(searchText.toLowerCase());
+  };
+
   const filteredData = useMemo(() => {
-    const globalFilterLower = (globalFilter || "").toLowerCase();
+    const globalFilterLower = globalFilter.toLowerCase();
     return listings
       .filter((listing) => {
         let pay = [0, 0];
@@ -176,11 +180,18 @@ const useListingsData = (showApplied) => {
           return false;
         }
 
-        return isAboveMinPay;
+        const searchableText = [
+          listing.title,
+          listing.company,
+          renderLocation(listing.location),
+          normalizeCompensation(listing.compensation),
+          listing.date,
+        ]
+          .join(" ")
+          .toLowerCase();
+
+        return isAboveMinPay && containsText(searchableText, globalFilterLower);
       })
-      .filter((listing) =>
-        listing.title.toLowerCase().includes(globalFilterLower)
-      )
       .map((listing) => ({
         ...listing,
         compensation: normalizeCompensation(listing.compensation),

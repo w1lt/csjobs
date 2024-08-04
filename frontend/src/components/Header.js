@@ -8,6 +8,7 @@ import {
   Group,
   useMantineTheme,
   SegmentedControl,
+  Tooltip,
 } from "@mantine/core";
 import {
   IconUserCheck,
@@ -93,7 +94,7 @@ const Header = () => {
             fontSize: "2rem",
             cursor: "pointer",
           }}
-          onClick={() => navigate("/")}
+          onClick={token ? () => navigate("/listings") : () => navigate("/")}
         >
           csjobs
         </Text>
@@ -121,12 +122,20 @@ const Header = () => {
               ),
             },
             {
+              disabled: true,
               value: "/cover-letter",
               label: (
-                <Flex gap={5} align={"center"}>
-                  <IconSparkles size={18} />
-                  Cover Letter
-                </Flex>
+                <Tooltip
+                  position="bottom"
+                  label="Pro Feature 🔒"
+                  withArrow
+                  color="yellow"
+                >
+                  <Flex gap={5} align={"center"}>
+                    <IconSparkles size={18} />
+                    AI Tools
+                  </Flex>
+                </Tooltip>
               ),
             },
           ]}

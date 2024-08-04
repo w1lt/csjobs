@@ -83,7 +83,7 @@ const CustomTable = ({ columns, data }) => {
                 colSpan={columns.length}
                 style={{ textAlign: "center", padding: "16px" }}
               >
-                <Text>No results found. Try changing filters.</Text>
+                <Text>No results found. </Text>
               </Table.Td>
             </Table.Tr>
           ) : (

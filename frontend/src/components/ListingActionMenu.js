@@ -11,8 +11,8 @@ import {
   IconCopy,
   IconEyeOff,
 } from "@tabler/icons-react";
-import { applyOrUpdateApplication } from "../api"; // Ensure correct imports for API functions
-import { disableListing } from "../api/admin"; // Ensure correct imports for API functions
+import { applyOrUpdateApplication } from "../api";
+import { disableListing } from "../api/admin";
 import { notifications } from "@mantine/notifications";
 import { useAuth } from "../context/AuthContext";
 import { modals } from "@mantine/modals";
@@ -26,7 +26,7 @@ const ListingActionMenu = ({
   shareListing,
   setConfettiVisible,
   setLoadingListingId,
-  loadingListingId, // Add loadingListingId to props
+  loadingListingId,
 }) => {
   const { token, appliedJobs, setAppliedJobs, setLoading, user } = useAuth();
 
@@ -47,6 +47,11 @@ const ListingActionMenu = ({
         [listingId]: { ...appliedJobs[listingId], status },
       };
       setAppliedJobs(updatedAppliedJobs);
+      setListings((prevListings) =>
+        prevListings.map((listing) =>
+          listing.id === listingId ? { ...listing, applied: true } : listing
+        )
+      );
     } catch (error) {
       console.error("Error updating application status:", error);
       setLoadingListingId(null); // Ensure to reset loadingListingId in case of error
@@ -62,6 +67,11 @@ const ListingActionMenu = ({
       setLoadingListingId(null);
       const { [listingId]: _, ...rest } = appliedJobs;
       setAppliedJobs(rest);
+      setListings((prevListings) =>
+        prevListings.map((listing) =>
+          listing.id === listingId ? { ...listing, applied: false } : listing
+        )
+      );
     } catch (error) {
       console.error("Error removing application status:", error);
       setLoadingListingId(null); // Ensure to reset loadingListingId in case of error

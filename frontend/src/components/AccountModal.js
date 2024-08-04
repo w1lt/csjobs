@@ -1,5 +1,5 @@
 import React from "react";
-import { TextInput, Box, Text } from "@mantine/core";
+import { TextInput, Box, Text, Group, Divider } from "@mantine/core";
 import { useAuth } from "../context/AuthContext";
 
 const AccountModal = () => {
@@ -21,23 +21,20 @@ const AccountModal = () => {
           readOnly
         />
 
+        <Divider my="sm" />
+
+        {/* Application Stats */}
         <Box mb="xs">
           <Text size="md" weight={500} mb="xs">
             Application Stats
           </Text>
-          <Box display="flex" alignItems="center">
-            <Text size="sm">Total Applications:</Text>
-            <Text size="sm" ml="xs" weight={600}>
-              {totalApplications}
-            </Text>
-          </Box>
+          <Group position="apart">
+            <Text size="sm">Total Applications: {totalApplications}</Text>
+          </Group>
 
-          <Box display="flex" alignItems="center" mt="xs">
-            <Text size="sm">Pending Applications:</Text>
-            <Text size="sm" ml="xs" weight={600}>
-              {pendingApplications}
-            </Text>
-          </Box>
+          <Group position="apart" mt="xs">
+            <Text size="sm">Pending Applications: {pendingApplications}</Text>
+          </Group>
         </Box>
       </Box>
     </>

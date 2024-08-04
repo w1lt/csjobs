@@ -195,15 +195,17 @@ const ApplicationsPage = () => {
         <Text align="center" size="lg" mb="sm" weight={700}>
           Application Stats
         </Text>
-        <BarChart
-          h={300}
-          data={loading ? [] : data.filter((item) => item.count > 0)}
-          dataKey="status"
-          withLegend={false}
-          withTooltip={false}
-          series={[{ name: "count", color: "yellow" }]}
-          mr={30}
-        />
+        {appliedJobs && (
+          <BarChart
+            h={300}
+            data={loading ? [] : data.filter((item) => item.count > 0)}
+            dataKey="status"
+            withLegend={false}
+            withTooltip={false}
+            series={[{ name: "count", color: "yellow" }]}
+            mr={30}
+          />
+        )}
       </Box>
       {confettiVisible && (
         <Confetti

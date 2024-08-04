@@ -2,7 +2,7 @@ import React from "react";
 import { Button, Text, Box, Flex } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";
 import { useAuth } from "../context/AuthContext";
-import { applyOrUpdateApplication } from "../api/index";
+import { applyOrUpdateApplication } from "../api";
 import { notifications } from "@mantine/notifications";
 import { modals } from "@mantine/modals";
 
@@ -26,7 +26,9 @@ const ConfirmApplyModal = ({ context, id, innerProps }) => {
         };
         console.log("Sending application data:", applicationData);
         setLoading(true);
-        innerProps.setLoadingListingId(innerProps.currentListingId);
+        if (typeof innerProps.setLoadingListingId === "function") {
+          innerProps.setLoadingListingId(innerProps.currentListingId);
+        }
         context.closeModal(id);
         await applyOrUpdateApplication(applicationData, token);
 
@@ -34,13 +36,15 @@ const ConfirmApplyModal = ({ context, id, innerProps }) => {
           ...appliedJobs,
           [innerProps.currentListingId]: {
             status: "pending",
-            title: innerProps.currentJobTitle,
+            title: innerProps.jobTitle,
           },
         };
         setAppliedJobs(updatedAppliedJobs);
 
         setLoading(false);
-        innerProps.setLoadingListingId(null);
+        if (typeof innerProps.setLoadingListingId === "function") {
+          innerProps.setLoadingListingId(null);
+        }
         innerProps.setConfettiVisible(true);
         notifications.show({
           title: "Nice Work!",
@@ -59,6 +63,15 @@ const ConfirmApplyModal = ({ context, id, innerProps }) => {
       }
     } catch (error) {
       console.error("Error confirming application:", error);
+      setLoading(false);
+      if (typeof innerProps.setLoadingListingId === "function") {
+        innerProps.setLoadingListingId(null);
+      }
+      notifications.show({
+        title: "Error",
+        message: "There was an error applying to the job.",
+        color: "red",
+      });
     }
   };
 

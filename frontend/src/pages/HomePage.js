@@ -229,7 +229,7 @@ const Homepage = () => {
           style={{ cursor: "pointer" }}
           onClick={clearFilters}
         >
-          Clear filters
+          Clear Filters
         </Text>
       </Group>
       <Paper shadow="md" py="sm" withBorder>
