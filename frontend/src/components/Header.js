@@ -25,10 +25,12 @@ import { useColorSchemeToggle } from "../utils/useColorSchemeToggle";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { modals } from "@mantine/modals";
+import { useWindowScroll } from "@mantine/hooks";
 
 const Header = () => {
   const { token, logout, user, setLoading } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
+  const [, scrollTo] = useWindowScroll(); // Ignore the scroll state
   const navigate = useNavigate();
   const location = useLocation();
   const theme = useMantineTheme();
@@ -91,7 +93,7 @@ const Header = () => {
           alt="logo"
           h={50}
           align="center"
-          onClick={token ? () => navigate("/listings") : () => navigate("/")}
+          onClick={token ? () => scrollTo({ y: 0 }) : () => navigate("/")}
           style={{
             cursor: "pointer",
           }}
@@ -151,6 +153,7 @@ const Header = () => {
             <Button variant="outline" radius={"lg"}>
               <Group gap={"xs"}>
                 {token ? <IconUserCheck /> : <IconUserX size={24} />}
+                {token && user?.username}
                 <IconMenu2 />
               </Group>
             </Button>
