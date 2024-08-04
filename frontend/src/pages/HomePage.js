@@ -15,7 +15,6 @@ import {
 import CustomTable from "../components/CustomTable";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
-import Header from "../components/Header";
 import { modals } from "@mantine/modals";
 import useListingsData from "../hooks/useListingsData";
 import formatDate from "../utils/formatDate";
@@ -130,8 +129,7 @@ const Homepage = () => {
   );
 
   return (
-    <Container size="md">
-      <Header />
+    <>
       <Text align="center" size="lg" mb="md" c="dimmed">
         Browse, apply, and secure your dream internship. New listings added
         daily.
@@ -253,7 +251,7 @@ const Homepage = () => {
           numberOfPieces={50}
         />
       )}
-    </Container>
+    </>
   );
 };
 

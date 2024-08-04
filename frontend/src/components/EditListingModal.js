@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, TextInput, Box, LoadingOverlay, Switch } from "@mantine/core";
 import { useAuth } from "../context/AuthContext"; // Adjust the path as needed
 import { updateListing, getListingDetails, deleteListing } from "../api/admin"; // Adjust the path as needed
+import { notifications } from "@mantine/notifications";
 
 const EditListingModal = ({ context, id, innerProps }) => {
   const [title, setTitle] = useState("");
@@ -55,6 +56,14 @@ const EditListingModal = ({ context, id, innerProps }) => {
   const handleSubmit = async () => {
     try {
       setLoading(true);
+      const id = notifications.show({
+        title: "Updating Listing",
+        message: "Please wait...",
+        loading: true,
+        autoClose: false,
+        withCloseButton: false,
+      });
+
       await updateListing(
         innerProps.listingId,
         {
@@ -72,6 +81,12 @@ const EditListingModal = ({ context, id, innerProps }) => {
         token
       );
       setLoading(false);
+      notifications.update(id, {
+        title: "Listing Updated",
+        message: "The listing has been updated successfully",
+        loading: false,
+        autoClose: 3000,
+      });
       context.closeModal(id);
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred");

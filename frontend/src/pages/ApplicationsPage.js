@@ -11,7 +11,6 @@ import {
 import CustomTable from "../components/CustomTable";
 import { useMediaQuery } from "@mantine/hooks";
 import Confetti from "react-confetti";
-import Header from "../components/Header";
 import { modals } from "@mantine/modals";
 import useListingsData from "../hooks/useListingsData";
 import formatDate from "../utils/formatDate";
@@ -148,7 +147,6 @@ const ApplicationsPage = () => {
   if (!token) {
     return (
       <Container size="md">
-        <Header />
         <Text align="center" size="xl" weight={700} mt="lg" mb="sm">
           Applications
         </Text>
@@ -161,7 +159,6 @@ const ApplicationsPage = () => {
 
   return (
     <Container size="md">
-      <Header />
       <Text align="center" size="xl" weight={700} mt="lg" mb="sm">
         Applied Listings
       </Text>

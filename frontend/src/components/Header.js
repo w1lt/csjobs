@@ -7,8 +7,8 @@ import {
   Group,
   useMantineTheme,
   SegmentedControl,
-  Tooltip,
   Image,
+  Indicator,
 } from "@mantine/core";
 import {
   IconUserCheck,
@@ -28,7 +28,7 @@ import { modals } from "@mantine/modals";
 import { useMediaQuery, useWindowScroll } from "@mantine/hooks";
 
 const Header = () => {
-  const { token, logout, user, setLoading } = useAuth();
+  const { token, logout, user, appliedJobs } = useAuth();
   const { toggleColorScheme, currentColorScheme } = useColorSchemeToggle();
   const [, scrollTo] = useWindowScroll(); // Ignore the scroll state
   const navigate = useNavigate();
@@ -37,19 +37,24 @@ const Header = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const [segmentedValue, setSegmentedValue] = useState(location.pathname);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
 
   const handleSegmentChange = (value) => {
     setSegmentedValue(value);
-    setLoading(false);
-    setLoading(true);
-    setTimeout(() => {
-      navigate(value);
-    }, 200);
+    navigate(value);
   };
 
   useEffect(() => {
     setSegmentedValue(location.pathname);
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (Object.values(appliedJobs)?.length > 0) {
+      setTooltipVisible(true);
+    } else {
+      setTooltipVisible(false);
+    }
+  }, [appliedJobs, location.pathname]);
 
   const openHelpModal = () => {
     modals.openContextModal({
@@ -88,7 +93,7 @@ const Header = () => {
       pb={20}
       pt={20}
     >
-      <Flex justify="space-between" align="center">
+      <Flex justify={isMobile ? "center" : "space-between"} align="center">
         {!isMobile && (
           <Image
             src="/csjobs.svg"
@@ -102,7 +107,7 @@ const Header = () => {
           />
         )}
         <SegmentedControl
-          transitionDuration={100}
+          transitionDuration={150}
           value={segmentedValue}
           onChange={handleSegmentChange}
           data={[
@@ -118,90 +123,90 @@ const Header = () => {
             {
               value: "/applications",
               label: (
-                <Flex gap={5} align={"center"}>
-                  <IconChecklist size={18} />
-                  My Applications
-                </Flex>
+                <Indicator
+                  disabled={!tooltipVisible}
+                  position="top-center"
+                  label={Object.values(appliedJobs)?.length}
+                >
+                  <Flex gap={5} align={"center"}>
+                    <IconChecklist size={18} />
+                    My Applications
+                  </Flex>
+                </Indicator>
               ),
             },
             {
-              disabled: true,
-              value: "/cover-letter",
+              value: "/ai",
               label: (
-                <Tooltip
-                  position="bottom"
-                  label="Pro Feature 🔒"
-                  withArrow
-                  color="yellow"
-                >
-                  <Flex gap={5} align={"center"}>
-                    <IconSparkles size={18} />
-                    AI Tools
-                  </Flex>
-                </Tooltip>
+                <Flex gap={5} align={"center"}>
+                  <IconSparkles size={18} />
+                  Tools
+                </Flex>
               ),
             },
           ]}
         />
 
-        <Menu
-          position="bottom-end"
-          withArrow
-          trigger="click-hover"
-          openDelay={25}
-          closeDelay={100}
-          width={200}
-        >
-          <Menu.Target>
-            <Button variant="outline" radius={"lg"}>
-              <Group gap={"xs"}>
-                {token ? <IconUserCheck /> : <IconUserX size={24} />}
-                {token && user?.username}
-                <IconMenu2 />
-              </Group>
-            </Button>
-          </Menu.Target>
-          <Menu.Dropdown>
-            {token ? (
-              <>
-                <Menu.Label>Account</Menu.Label>
-                <Menu.Item onClick={openAccountModal}>My Account</Menu.Item>
-                {user?.isAdmin && (
-                  <Menu.Item onClick={() => navigate("/admin")}>
-                    Admin Page
+        {!isMobile && (
+          <Menu
+            position="bottom-end"
+            withArrow
+            trigger="click-hover"
+            openDelay={25}
+            closeDelay={100}
+            width={200}
+          >
+            <Menu.Target>
+              <Button variant="outline" radius={"lg"}>
+                <Group gap={"xs"}>
+                  {token ? <IconUserCheck /> : <IconUserX size={24} />}
+                  {token && user?.username}
+                  <IconMenu2 />
+                </Group>
+              </Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              {token ? (
+                <>
+                  <Menu.Label>Account</Menu.Label>
+                  <Menu.Item onClick={openAccountModal}>My Account</Menu.Item>
+                  {user?.isAdmin && (
+                    <Menu.Item onClick={() => navigate("/admin")}>
+                      Admin Page
+                    </Menu.Item>
+                  )}
+                  <Menu.Item c={"red"} onClick={() => logout()}>
+                    Log Out
                   </Menu.Item>
-                )}
-                <Menu.Item c={"red"} onClick={() => logout()}>
-                  Log Out
-                </Menu.Item>
-              </>
-            ) : (
-              <>
-                <Menu.Label>Not logged in</Menu.Label>
-                <Menu.Item onClick={openAuthModal}>Log In</Menu.Item>
-              </>
-            )}
-            <Menu.Divider />
-            <Menu.Item
-              leftSection={<IconHelp size={18} />}
-              onClick={openHelpModal}
-            >
-              Help Center
-            </Menu.Item>
-            <Menu.Item
-              leftSection={
-                currentColorScheme === "dark" ? (
-                  <IconSun size={18} />
-                ) : (
-                  <IconMoon size={18} />
-                )
-              }
-              onClick={toggleColorScheme}
-            >
-              Change Theme
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+                </>
+              ) : (
+                <>
+                  <Menu.Label>Not logged in</Menu.Label>
+                  <Menu.Item onClick={openAuthModal}>Log In</Menu.Item>
+                </>
+              )}
+              <Menu.Divider />
+              <Menu.Item
+                leftSection={<IconHelp size={18} />}
+                onClick={openHelpModal}
+              >
+                Help Center
+              </Menu.Item>
+              <Menu.Item
+                leftSection={
+                  currentColorScheme === "dark" ? (
+                    <IconSun size={18} />
+                  ) : (
+                    <IconMoon size={18} />
+                  )
+                }
+                onClick={toggleColorScheme}
+              >
+                Change Theme
+              </Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        )}
       </Flex>
     </Box>
   );

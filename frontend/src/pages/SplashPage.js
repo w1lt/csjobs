@@ -20,9 +20,15 @@ const companyLogos = [
   "https://www.svgrepo.com/show/424916/meta-logo-facebook.svg",
   "https://www.svgrepo.com/show/303143/microsoft-logo.svg",
   "https://www.svgrepo.com/show/303630/nvidia-logo.svg",
+  "https://www.svgrepo.com/show/303337/spacex-logo.svg",
+  "https://www.svgrepo.com/show/303391/tesla-9-logo.svg",
 ];
 
 const duplicatedLogos = [
+  ...companyLogos,
+  ...companyLogos,
+  ...companyLogos,
+  ...companyLogos,
   ...companyLogos,
   ...companyLogos,
   ...companyLogos,
@@ -88,9 +94,7 @@ const SplashPage = () => {
         initial={{ opacity: 1 }}
         animate={containerControls}
         style={{
-          position: "relative",
-          minHeight: "100vh",
-          overflow: "hidden",
+          minHeight: "50vh",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -103,7 +107,6 @@ const SplashPage = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 1 }}
           style={{
-            position: "absolute",
             top: 0,
             left: 0,
             width: "100%",
@@ -181,11 +184,6 @@ const SplashPage = () => {
         </motion.div>
         <style>
           {`
-            .scroll-container {
-              display: flex;
-              overflow: hidden;
-              white-space: nowrap;
-            }
             .logo {
               flex: 0 0 auto;
               margin: 0 1rem;
@@ -203,7 +201,7 @@ const SplashPage = () => {
               display: flex;
               justify-content: center;
               align-items: center;
-              min-width: 150px;
+              min-width: 125px;
               text-align: center;
             }
              
@@ -226,17 +224,7 @@ const SplashPage = () => {
             }
             .button-container {
               position: relative;
-              overflow: hidden;
               display: inline-block;
-            }
-            .swipe-effect {
-              position: absolute;
-              top: 0;
-              left: -100%;
-              width: 100%;
-              height: 100%;
-              background: rgba(255, 255, 255, 0.2);
-              pointer-events: none;
             }
           `}
         </style>
@@ -310,27 +298,34 @@ const SplashPage = () => {
           component={motion.div}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 0.5 }}
+          transition={{ delay: 0.25, duration: 1.5 }}
         >
-          <Box style={{ overflow: "hidden", width: "100%" }}>
-            <motion.div
-              className="scroll-container"
-              animate={{ x: -((duplicatedLogos.length / 2) * 150) }}
-              transition={{
-                repeat: Infinity,
-                repeatType: "loop",
-                ease: "linear",
-                duration: 30,
+          <Center>
+            <Box
+              style={{
+                overflow: "hidden",
+                marginRight: "15%",
               }}
-              style={{ display: "flex", width: duplicatedLogos.length * 150 }}
             >
-              {duplicatedLogos.map((logo, index) => (
-                <Box key={index} className="logo">
-                  <img src={logo} alt={`Company ${index + 1}`} />
-                </Box>
-              ))}
-            </motion.div>
-          </Box>
+              <motion.div
+                className="scroll-container"
+                animate={{ x: -((duplicatedLogos.length / 2) * 100) }}
+                transition={{
+                  repeat: Infinity,
+                  repeatType: "loop",
+                  ease: "linear",
+                  duration: 60,
+                }}
+                style={{ display: "flex" }}
+              >
+                {duplicatedLogos.map((logo, index) => (
+                  <Box key={index} className="logo">
+                    <img src={logo} alt={`Company ${index + 1}`} />
+                  </Box>
+                ))}
+              </motion.div>
+            </Box>
+          </Center>
         </Container>
       </motion.div>
     )

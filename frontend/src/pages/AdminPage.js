@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import {
-  Container,
   Paper,
   Button,
   TextInput,
@@ -25,7 +24,6 @@ import { useTable, useSortBy } from "react-table";
 import { IconArrowDown, IconArrowUp, IconCheck } from "@tabler/icons-react";
 import UsersTable from "../components/UsersTable";
 import { nprogress } from "@mantine/nprogress";
-import Header from "../components/Header";
 
 const AdminPage = () => {
   const { token, loading } = useAuth();
@@ -220,8 +218,7 @@ const AdminPage = () => {
     );
 
   return (
-    <Container size="md">
-      <Header />
+    <>
       <Title align="center" mb="lg">
         Admin Page
       </Title>
@@ -359,7 +356,7 @@ const AdminPage = () => {
           Update User
         </Button>
       </Modal>
-    </Container>
+    </>
   );
 };
 
