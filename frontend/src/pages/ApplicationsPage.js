@@ -145,6 +145,20 @@ const ApplicationsPage = () => {
   );
   const statusFilterApplied = statusFilter.length > 0;
 
+  if (!token) {
+    return (
+      <Container size="md">
+        <Header />
+        <Text align="center" size="xl" weight={700} mt="lg" mb="sm">
+          Applications
+        </Text>
+        <Text align="center" size="lg" mb="sm" c="dimmed">
+          Please log in to view your applications.
+        </Text>
+      </Container>
+    );
+  }
+
   return (
     <Container size="md">
       <Header />

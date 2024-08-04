@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Flex,
-  Text,
   Box,
   Menu,
   Button,
@@ -9,6 +8,7 @@ import {
   useMantineTheme,
   SegmentedControl,
   Tooltip,
+  Image,
 } from "@mantine/core";
 import {
   IconUserCheck,
@@ -41,7 +41,7 @@ const Header = () => {
     setLoading(true);
     setTimeout(() => {
       navigate(value);
-    }, 150);
+    }, 200);
   };
 
   useEffect(() => {
@@ -86,18 +86,16 @@ const Header = () => {
       pt={20}
     >
       <Flex justify="space-between" align="center">
-        <Text
+        <Image
+          src="/csjobs.svg"
+          alt="logo"
+          h={50}
           align="center"
-          variant="gradient"
-          gradient={{ from: "indigo", to: "red", deg: 149 }}
+          onClick={token ? () => navigate("/listings") : () => navigate("/")}
           style={{
-            fontSize: "2rem",
             cursor: "pointer",
           }}
-          onClick={token ? () => navigate("/listings") : () => navigate("/")}
-        >
-          csjobs
-        </Text>
+        />
         <SegmentedControl
           transitionDuration={100}
           value={segmentedValue}
