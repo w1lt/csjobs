@@ -112,20 +112,15 @@ const SplashPage = () => {
             id="tsparticles"
             particlesLoaded={particlesLoaded}
             options={{
-              background: {
-                color: {
-                  value: "#0d47a1",
-                },
-              },
               fpsLimit: 120,
               interactivity: {
                 events: {
                   onClick: {
-                    enable: true,
+                    enable: false,
                     mode: "push",
                   },
                   onHover: {
-                    enable: true,
+                    enable: false,
                     mode: "repulse",
                   },
                   resize: true,
@@ -161,7 +156,7 @@ const SplashPage = () => {
                     default: "bounce",
                   },
                   random: false,
-                  speed: 6,
+                  speed: 0.25,
                   straight: false,
                 },
                 number: {
@@ -282,6 +277,9 @@ const SplashPage = () => {
               Start Applying, it's Free!
             </Button>
           </motion.div>
+          <Text size="md" mt={25}>
+            Trusted by top companies, worldwide.
+          </Text>
         </Container>
         <Container
           size="md"
@@ -289,27 +287,17 @@ const SplashPage = () => {
             textAlign: "center",
             color: theme.white,
             zIndex: 1,
-            marginTop: theme.spacing.xl,
           }}
+          mt={10}
           component={motion.div}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
+          transition={{ delay: 1, duration: 0.5 }}
         >
-          <Text
-            size="xl"
-            weight={700}
-            style={{ marginBottom: theme.spacing.md, textAlign: "center" }}
-          >
-            Trusted by top companies, worldwide.
-          </Text>
-
           <Box style={{ overflow: "hidden", width: "100%" }}>
             <motion.div
               className="scroll-container"
-              initial={{ x: 0 }}
               animate={{ x: -((duplicatedLogos.length / 2) * 150) }}
-              whileHover={{ x: 0 }}
               transition={{
                 repeat: Infinity,
                 repeatType: "loop",
