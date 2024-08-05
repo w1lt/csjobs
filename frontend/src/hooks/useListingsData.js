@@ -118,7 +118,7 @@ const useListingsData = (showApplied) => {
       const firstLocation = location[0];
       return (
         <Tooltip label={location.join(" - ")} withArrow>
-          <span>{`${firstLocation} + ${location.length - 1} more`}</span>
+          <span>{`${firstLocation} + ${location.length - 1}`}</span>
         </Tooltip>
       );
     }
