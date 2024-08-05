@@ -54,10 +54,11 @@ const ApplicationsPage = () => {
   ).length;
 
   const data = [
-    { status: "Pending", count: pendingApplications },
-    { status: "Interview", count: interviewApplications },
-    { status: "Denied", count: deniedApplications },
+    { status: "Pending", count: pendingApplications, color: "yellow" },
+    { status: "Interview", count: interviewApplications, color: "green" },
+    { status: "Denied", count: deniedApplications, color: "red" },
   ];
+  
 
   const openAuthModal = () => {
     modals.openContextModal({

@@ -125,8 +125,14 @@ const Header = () => {
               label: (
                 <Indicator
                   disabled={!tooltipVisible}
-                  position="top-center"
+                  position="top-right"
                   label={Object.values(appliedJobs)?.length}
+                  styles={{
+                    indicator: {
+                      top: "-3px",
+                      right: "-7px",
+                    },
+                  }}
                 >
                   <Flex gap={5} align={"center"}>
                     <IconChecklist size={18} />
