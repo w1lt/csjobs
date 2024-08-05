@@ -91,7 +91,7 @@ const Homepage = () => {
     { Header: "Location", accessor: "location" },
     { Header: "Compensation", accessor: "compensation" },
     {
-      Header: "Posted On",
+      Header: "Posted",
       accessor: "date",
       Cell: ({ value }) => formatDate(value),
     },

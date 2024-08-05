@@ -7,6 +7,7 @@ import {
   Select,
   TextInput,
   Chip,
+  Checkbox,
 } from "@mantine/core";
 import { IconChevronDown, IconChevronUp, IconX } from "@tabler/icons-react";
 
@@ -25,9 +26,19 @@ const FilterPopover = ({
   onOpen,
   onClose,
   icon: Icon,
+  mostOccurringOptions = [],
 }) => {
   const isArrayValue = Array.isArray(value);
   const selectedCount = isArrayValue ? value.length : value ? 1 : 0;
+
+  const handleCheckboxChange = (option) => {
+    const newValue = isArrayValue
+      ? value.includes(option)
+        ? value.filter((v) => v !== option)
+        : [...value, option]
+      : option;
+    onChange(newValue);
+  };
 
   return (
     <Popover position="bottom-end" withArrow closeOnClickOutside={true}>
@@ -51,14 +62,26 @@ const FilterPopover = ({
       </Indicator>
       <Popover.Dropdown>
         {inputType === "select" ? (
-          <Select
-            label={label}
-            placeholder={placeholder}
-            searchable
-            data={data}
-            value={value}
-            onChange={onChange}
-          />
+          <>
+            <Select
+              label={label}
+              placeholder={placeholder}
+              searchable
+              data={data}
+              value={value}
+              onChange={onChange}
+            />
+            <Stack mt="xs">
+              {mostOccurringOptions.map((option) => (
+                <Checkbox
+                  key={option}
+                  label={option}
+                  checked={value.includes(option)}
+                  onChange={() => handleCheckboxChange(option)}
+                />
+              ))}
+            </Stack>
+          </>
         ) : (
           <TextInput
             type={inputType}
