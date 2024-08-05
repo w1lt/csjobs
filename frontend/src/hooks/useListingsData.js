@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { getListings, getApplications } from "../api";
 import { useAuth } from "../context/AuthContext";
-import convertToDate from "../utils/convertToDate";
+import { Tooltip } from "@mantine/core"; // Import Tooltip component
 
 const useMultiSelect = (initialSelected = []) => {
   const [selectedItems, setSelectedItems] = useState(initialSelected);
@@ -52,8 +52,8 @@ const useListingsData = (showApplied) => {
     const fetchListings = async () => {
       setLoading(true);
       const data = await getListings();
-      const sortedListings = [...data].sort(
-        (a, b) => convertToDate(b.date) - convertToDate(a.date)
+      const sortedListings = data.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
       );
       setListings(sortedListings);
       setLoading(false);
@@ -62,11 +62,15 @@ const useListingsData = (showApplied) => {
     const fetchApplications = async () => {
       try {
         const data = await getApplications(token);
+        const sortedApplications = data.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
         const applied = {};
-        data.forEach((app) => {
+        sortedApplications.forEach((app) => {
           applied[app.ListingId] = {
             status: app.status,
             title: app.Listing.title,
+            createdAt: app.createdAt,
           };
         });
         setAppliedJobs(applied);
@@ -108,8 +112,15 @@ const useListingsData = (showApplied) => {
 
   const renderLocation = (location) => {
     if (Array.isArray(location)) {
+      if (location.length === 1) {
+        return location[0];
+      }
       const firstLocation = location[0];
-      return `${firstLocation} + ${location.length - 1} more`;
+      return (
+        <Tooltip label={location.join(" - ")} withArrow>
+          <span>{`${firstLocation} + ${location.length - 1} more`}</span>
+        </Tooltip>
+      );
     }
     return location;
   };
@@ -232,7 +243,7 @@ const useListingsData = (showApplied) => {
       clearSelectedStatuses();
       setMinPay(0);
     },
-    setListings, // Add setListings here
+    setListings,
   };
 };
 

@@ -29,6 +29,10 @@ const Listing = sequelize.define("Listing", {
   tags: {
     type: DataTypes.ARRAY(DataTypes.STRING),
   },
+  disabled: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 // Define associations
