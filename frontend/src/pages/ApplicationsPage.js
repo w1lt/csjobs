@@ -7,6 +7,7 @@ import {
   TextInput,
   Box,
   Group,
+  ActionIcon,
 } from "@mantine/core";
 import CustomTable from "../components/CustomTable";
 import { useMediaQuery } from "@mantine/hooks";
@@ -17,7 +18,7 @@ import formatDate from "../utils/formatDate";
 import ListingActionMenu from "../components/ListingActionMenu";
 import { notifications } from "@mantine/notifications";
 import FilterPopover from "../components/FilterPopover";
-import { IconSearch, IconBriefcase2 } from "@tabler/icons-react";
+import { IconSearch, IconBriefcase2, IconX } from "@tabler/icons-react";
 import { useAuth } from "../context/AuthContext";
 import { BarChart } from "@mantine/charts";
 
@@ -58,7 +59,6 @@ const ApplicationsPage = () => {
     { status: "Interview", count: interviewApplications, color: "green" },
     { status: "Denied", count: deniedApplications, color: "red" },
   ];
-  
 
   const openAuthModal = () => {
     modals.openContextModal({
@@ -174,6 +174,16 @@ const ApplicationsPage = () => {
             onChange={(e) => setGlobalFilter(e.target.value || "")}
             placeholder={`Search ${filteredData.length} listings`}
             fullWidth
+            rightSection={
+              globalFilter && (
+                <ActionIcon
+                  onClick={() => setGlobalFilter("")}
+                  variant="transparent"
+                >
+                  <IconX size={16} />
+                </ActionIcon>
+              )
+            }
           />
         </Box>
         <FilterPopover

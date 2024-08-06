@@ -11,6 +11,7 @@ import {
   Popover,
   Slider,
   InputLabel,
+  ActionIcon,
 } from "@mantine/core";
 import CustomTable from "../components/CustomTable";
 import { useMediaQuery } from "@mantine/hooks";
@@ -28,6 +29,7 @@ import {
   IconBriefcase2,
   IconChevronDown,
   IconChevronUp,
+  IconX,
 } from "@tabler/icons-react";
 
 const Homepage = () => {
@@ -139,6 +141,16 @@ const Homepage = () => {
           <TextInput
             value={globalFilter}
             leftSection={<IconSearch size={18} />}
+            rightSection={
+              globalFilter && (
+                <ActionIcon
+                  onClick={() => setGlobalFilter("")}
+                  variant="transparent"
+                >
+                  <IconX size={16} />
+                </ActionIcon>
+              )
+            }
             onChange={(e) => setGlobalFilter(e.target.value || "")}
             placeholder={`Search ${filteredData.length} listings`}
             fullWidth
