@@ -3,7 +3,6 @@ import {
   Container,
   Paper,
   Text,
-  Flex,
   TextInput,
   Box,
   Group,
@@ -206,11 +205,6 @@ const ApplicationsPage = () => {
             columns={isMobile ? mobileColumns : columns}
             data={filteredData}
           />
-          <Flex justify="center" align="center" direction="row" mt="lg">
-            <Text align="center" c="dimmed">
-              + More jobs coming soon...
-            </Text>
-          </Flex>
         </Container>
       </Paper>
       <Box mt="lg">

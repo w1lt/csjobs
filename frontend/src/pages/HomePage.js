@@ -3,7 +3,6 @@ import {
   Container,
   Paper,
   Text,
-  Flex,
   TextInput,
   Box,
   Group,
@@ -248,11 +247,9 @@ const Homepage = () => {
             columns={isMobile ? mobileColumns : columns}
             data={filteredData}
           />
-          <Flex justify="center" align="center" direction="row" mt="lg">
-            <Text align="center" c="dimmed">
-              + More jobs coming soon...
-            </Text>
-          </Flex>
+          <Text align="center" c="dimmed" mt="sm">
+            + More jobs coming soon...
+          </Text>
         </Container>
       </Paper>
       {confettiVisible && (
