@@ -28,11 +28,13 @@ const FilterPopover = ({
   icon: Icon,
   mostOccurringOptions = [],
 }) => {
-  const isArrayValue = Array.isArray(value);
+  const isArrayValue = Array.isArray(value)
   const selectedCount = isArrayValue ? value.length : value ? 1 : 0;
 
   const handleCheckboxChange = (option) => {
-    const newValue = isArrayValue
+    const newValue = isArrayValue.map(function(v) {
+      return v.toLowerCase();
+    })
       ? value.includes(option)
         ? value.filter((v) => v !== option)
         : [...value, option]

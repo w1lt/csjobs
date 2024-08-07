@@ -227,9 +227,8 @@ const AdminPage = () => {
         <Title order={3}>Reports</Title>
         <Space h="md" />
 
-        {/* Display the total number of users */}
         <Text size="lg" weight={500} mb="sm">
-          Total Users: {users.length}
+              Total Reports: {reports.length}
         </Text>
 
         <div style={{ overflowX: "auto" }}>
@@ -272,6 +271,9 @@ const AdminPage = () => {
                 </MantineTable.Tr>
               ))}
             </MantineTable.Thead>
+
+            
+
             <MantineTable.Tbody {...getTableBodyProps()}>
               {rows.map((row) => {
                 prepareRow(row);
@@ -299,7 +301,14 @@ const AdminPage = () => {
         </div>
 
         {/* Render the UsersTable component */}
-        <UsersTable openUserModal={openUserModal} users={users} />
+        <Space h="md" />
+        <Title order={3}>User List</Title>
+        <Space h="md" />
+        <Text size="lg" weight={500} mb="sm">
+              Total Users: {users.length}
+        </Text>
+        <UsersTable openUserModal={openUserModal} users={users} ></UsersTable>
+       
         <Space h="md" />
         <Title order={3}>Actions</Title>
         <Button onClick={handleTriggerScraping}>Trigger Scraping</Button>
