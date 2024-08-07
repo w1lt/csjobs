@@ -81,7 +81,7 @@ const scrapeAndAddListings = async (req, res) => {
         location: item.locations,
         date: new Date(item.date_posted * 1000), // Convert timestamp to date
         link: item.url.split("?")[0], // Remove query parameters from URL
-        tags: [],
+        tags: item.terms,
       }));
 
     const ouckahListings = ouckahData.data
@@ -94,7 +94,7 @@ const scrapeAndAddListings = async (req, res) => {
         location: item.locations,
         date: new Date(item.date_posted * 1000), // Convert timestamp to date
         link: item.url.split("?")[0], // Remove query parameters from URL
-        tags: [],
+        tags: [item.season],
       }));
 
     const listings = [...simplifyListings, ...ouckahListings];
