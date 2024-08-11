@@ -180,7 +180,9 @@ const useListingsData = (showApplied) => {
         }
 
         if (statusFilter.length > 0 && appliedJobs[listing.id]) {
-          if (!statusFilter.includes(appliedJobs[listing.id].status)) {
+          if (!statusFilter.map(function(v) {
+            return v.toLowerCase();
+          }).includes(appliedJobs[listing.id].status)) {
             return false;
           }
         }

@@ -156,7 +156,7 @@ const Homepage = () => {
           />
         </Box>
         <FilterPopover
-          label="Job Type"
+          label="Job Term"
           placeholder="Select job types"
           data={availableJobTypes}
           value={selectedFilter}

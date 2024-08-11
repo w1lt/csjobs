@@ -132,9 +132,6 @@ const UsersTable = () => {
 
   return (
     <>
-      <Title order={3}>User List</Title>
-      <Space h="md" />
-
       <div style={{ overflowX: "auto" }}>
         <MantineTable
           {...getTableProps()}

@@ -188,7 +188,7 @@ const ApplicationsPage = () => {
         <FilterPopover
           label="Application Status"
           placeholder="Select status"
-          data={["pending", "interview", "denied"]}
+          data={["Pending", "Interview", "Denied"]}
           value={statusFilter}
           onChange={setStatusFilter}
           applied={statusFilterApplied}
