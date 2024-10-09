@@ -2,7 +2,9 @@ const { Listing } = require("../models");
 
 const getListings = async (req, res) => {
   try {
-    const listings = await Listing.findAll();
+    const listings = await Listing.findAll({
+      limit: 150, // Limit the result to 150 listings
+    });
     res.json(listings);
   } catch (error) {
     res.status(500).json({ message: "Server error" });
