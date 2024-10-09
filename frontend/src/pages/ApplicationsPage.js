@@ -159,9 +159,6 @@ const ApplicationsPage = () => {
 
   return (
     <Container size="md">
-      <Text align="center" size="xl" weight={700} mt="lg" mb="sm">
-        Applied Listings
-      </Text>
       <Text align="center" size="lg" mb="sm" c="dimmed">
         Here are all the listings you have applied to.
       </Text>

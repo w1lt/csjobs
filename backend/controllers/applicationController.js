@@ -6,6 +6,7 @@ const getApplications = async (req, res) => {
     const applications = await Application.findAll({
       where: { UserId: req.user.id },
       include: [Listing],
+      limit: 100, // Limit to the latest 100 applications
     });
     res.json(applications);
   } catch (error) {

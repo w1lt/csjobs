@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter as Router } from "react-router-dom";
+import { HashRouter, BrowserRouter as Router } from "react-router-dom";
 import { MantineProvider } from "@mantine/core";
 import { NavigationProgress } from "@mantine/nprogress";
 import { Notifications } from "@mantine/notifications";
@@ -25,13 +25,13 @@ root.render(
       <NavigationProgress />
       <Notifications />
 
-      <Router>
+      <HashRouter basename="/">
         <AuthProvider>
           <MyModalsProvider>
             <App />
           </MyModalsProvider>
         </AuthProvider>
-      </Router>
+      </HashRouter>
     </MantineProvider>
   </React.StrictMode>
 );
