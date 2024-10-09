@@ -4,6 +4,7 @@ const getListings = async (req, res) => {
   try {
     const listings = await Listing.findAll({
       limit: 150, // Limit the result to 150 listings
+      order: [["date", "DESC"]], // Order by the `date` field in descending order
     });
     res.json(listings);
   } catch (error) {
