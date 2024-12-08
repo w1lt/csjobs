@@ -93,6 +93,17 @@ const Header = () => {
       pb={20}
       pt={20}
     >
+      <Box
+        px={20}
+        pb={10}
+        bg="lime"
+        c="white"
+        style={{ textAlign: "center", justifyItems: "center" }}
+      >
+        This project has been archived and is read-only. Please visit{" "}
+        <a href="https://willwhitehead.tech">willwhitehead.tech</a> for updates.
+      </Box>
+
       <Flex justify={isMobile ? "center" : "space-between"} align="center">
         {!isMobile && (
           <Image
